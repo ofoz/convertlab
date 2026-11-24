@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { analyzePdfLayout, type PdfLayout } from '../src/converters/pdf-tables.ts';
+import { analyzePdfLayout, buildRows, detectTextTables, type PdfLayout } from '../src/converters/pdf-tables.ts';
 import { layoutToSheets } from '../src/converters/documents.ts';
 import { BINS, fixture, POppler } from './testkit.ts';
 
@@ -58,9 +58,52 @@ test('无边框 PDF 表格同样按列对齐识别', { skip: ready ? false : '�
   assert.deepEqual(table.rows[4], ['西南', '54.2', '58.9', '63.4', '176.5']);
 });
 
-test('纯段落 PDF 不会被误判出表格', { skip: ready ? false : '需要 Poppler pdftotext' }, async () => {
-  // 用 fixtures 里的表格 PDF 无法验证这点，改用一个只有一行一列的最小 PDF 不存在，因此这里跳过。
-  assert.ok(true);
+/** Builds words for one synthetic line: `chunks` laid out from `x`, each a run. */
+function lineWords(y: number, chunks: Array<{ x0: number; x1: number; text: string }>) {
+  return chunks.map((chunk) => ({ text: chunk.text, x0: chunk.x0, y0: y, x1: chunk.x1, y1: y + 10 }));
+}
+
+test('两端对齐的段落不会被误判为无边框表格', () => {
+  // Justified body text lines up on both margins, so a naive "left and right
+  // edge are stable" rule fires. The gutters inside each line wander, though,
+  // and no whitespace channel survives across lines.
+  const gutters = [
+    [98, 186, 296],
+    [226, 332, 402],
+    [74, 268, 388],
+    [160, 240, 430],
+    [112, 300, 356],
+  ];
+  const words = gutters.flatMap((edges, index) => {
+    const y = 100 + index * 18;
+    const xs = [40, ...edges, 470];
+    return lineWords(y, xs.slice(0, -1).map((x0, position) => ({
+      x0,
+      x1: xs[position + 1]! - 4,
+      text: `文本片段${index}${position}`,
+    })));
+  });
+  assert.equal(detectTextTables(buildRows(words)).length, 0);
+});
+
+test('列间空白通道稳定的无边框表格仍会被识别', () => {
+  const rows = [
+    ['区域', '一月', '二月'],
+    ['华东', '1,240', '1,380'],
+    ['华南', '980', '1,050'],
+    ['华北', '760', '880'],
+  ];
+  const words = rows.flatMap((cells, index) => {
+    const y = 100 + index * 18;
+    return lineWords(y, [
+      { x0: 40, x1: 120, text: cells[0]! },
+      { x0: 170, x1: 250, text: cells[1]! },
+      { x0: 300, x1: 380, text: cells[2]! },
+    ]);
+  });
+  const tables = detectTextTables(buildRows(words));
+  assert.equal(tables.length, 1);
+  assert.deepEqual(tables[0]!.rows, rows);
 });
 
 test('跨页续接的表格不会被重复写入 Excel 工作表', () => {

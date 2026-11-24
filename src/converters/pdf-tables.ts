@@ -85,7 +85,7 @@ function attrString(attrs: string, name: string): string {
   return new RegExp(`\\b${name}="([^"]*)"`).exec(attrs)?.[1] ?? '';
 }
 
-function parsePages(xhtml: string): RawPage[] {
+export function parsePages(xhtml: string): RawPage[] {
   const pages: RawPage[] = [];
   const pagePattern = /<page\b([^>]*)>([\s\S]*?)<\/page>/g;
   let pageMatch: RegExpExecArray | null;
@@ -142,7 +142,7 @@ function mode(values: number[]): number {
   return best;
 }
 
-function buildRows(words: Word[]): Row[] {
+export function buildRows(words: Word[]): Row[] {
   if (words.length === 0) return [];
   const heights = words.map((word) => word.y1 - word.y0).filter((height) => height > 0.5);
   const tolerance = Math.max(2.2, median(heights) * 0.45);
@@ -238,7 +238,7 @@ type Run = { x0: number; x1: number; words: Word[] };
 const KERN_GAP = 1.4;
 const MAX_COLUMNS = 24;
 
-function runsOf(row: Row, threshold: number): Run[] {
+export function runsOf(row: Row, threshold: number): Run[] {
   const runs: Run[] = [];
   for (const word of row.words) {
     const last = runs[runs.length - 1];
@@ -259,7 +259,7 @@ type Shape = { threshold: number; counts: number[]; coverage: number; columns: n
  * "small" varies with the generator. Try every occurring gap and keep the
  * smallest threshold at which most rows agree on the same cell count.
  */
-function chooseShape(rows: Row[], start: number, end: number): Shape | null {
+export function chooseShape(rows: Row[], start: number, end: number): Shape | null {
   const indices: number[] = [];
   for (let index = start; index <= end; index += 1) indices.push(index);
 
@@ -342,6 +342,23 @@ function buildTextTable(rows: Row[], blockStart: number, blockEnd: number, shape
   }
   if (aligned.length < 2) return null;
 
+  /**
+   * A borderless table keeps a whitespace channel open between two columns:
+   * every row leaves the same x range blank. Justified body text also lines up
+   * on both page margins, but the gaps inside a line fall wherever the words
+   * happen to break, so no shared channel exists. Rejecting blocks without one
+   * is what keeps two-column prose from turning into a table.
+   */
+  for (let position = 1; position < columns; position += 1) {
+    let channelStart = Number.NEGATIVE_INFINITY;
+    let channelEnd = Number.POSITIVE_INFINITY;
+    for (const runs of aligned) {
+      channelStart = Math.max(channelStart, runs[position - 1]!.x1);
+      channelEnd = Math.min(channelEnd, runs[position]!.x0);
+    }
+    if (channelEnd - channelStart < 1) return null;
+  }
+
   const boundaries: number[] = [];
   for (let position = 1; position < columns; position += 1) {
     const midpoints = aligned.map((runs) => (runs[position - 1]!.x1 + runs[position]!.x0) / 2);
@@ -415,7 +432,7 @@ function buildTextTable(rows: Row[], blockStart: number, blockEnd: number, shape
   return { start, end, rows: kept, weights };
 }
 
-function detectTextTables(rows: Row[]): TextTableCandidate[] {
+export function detectTextTables(rows: Row[]): TextTableCandidate[] {
   const candidates = rows.map((row) => runsOf(row, KERN_GAP).length >= 2);
   const tables: TextTableCandidate[] = [];
   let index = 0;
