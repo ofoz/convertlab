@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log*
+.npm-cache
+dist
+data
+work
+outputs
+tests/tmp
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+docs
+README.md

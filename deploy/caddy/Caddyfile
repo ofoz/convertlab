@@ -1,0 +1,45 @@
+# ConvertLab — TLS terminator.
+#
+#   :80            plain HTTP catch-all (works over the bare IP address)
+#   dp.192163.xyz  HTTPS with the certificate inherited from the previous setup
+#
+# There is deliberately no HTTPS listener for the bare IP: a public CA cannot
+# issue a certificate for 111.91.29.56, so https://<ip> would only ever show a
+# browser warning. Use http://<ip> or https://dp.192163.xyz.
+#
+# Every block proxies to the application, which only listens on 127.0.0.1:8080.
+{
+	# Caddy's own logs; rotate by size so a long-running box cannot fill the disk.
+	log {
+		output file /var/log/caddy/caddy.log {
+			roll_size 20MiB
+			roll_keep 5
+		}
+		level INFO
+	}
+}
+
+(convertlab) {
+	encode zstd gzip
+	# Streams the multipart upload straight through and keeps server-sent
+	# events (job progress) unbuffered.
+	request_body {
+		max_size 250MB
+	}
+	reverse_proxy 127.0.0.1:8080 {
+		flush_interval -1
+		transport http {
+			read_timeout 15m
+			write_timeout 15m
+		}
+	}
+}
+
+:80 {
+	import convertlab
+}
+
+https://dp.192163.xyz {
+	tls /etc/caddy/certs/dp/fullchain.pem /etc/caddy/certs/dp/privkey.pem
+	import convertlab
+}

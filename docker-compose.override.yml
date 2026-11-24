@@ -1,0 +1,65 @@
+# ConvertLab — single-host tuning for a small (800 MB RAM) VPS.
+#
+# docker compose automatically merges this file with docker-compose.yml.
+# The limits below are ceilings, not reservations: the stack idles at roughly
+# 250-300 MB and only the worker grows while LibreOffice or FFmpeg is running.
+# Keep 4 GB of swap enabled on hosts with less than 2 GB of RAM.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    # Docker's default is unlimited: on a 40 GB disk one noisy process can
+    # fill the whole volume.
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  postgres:
+    logging: *default-logging
+    command:
+      - postgres
+      - -c
+      - shared_buffers=48MB
+      - -c
+      - max_connections=20
+      - -c
+      - work_mem=4MB
+      - -c
+      - maintenance_work_mem=24MB
+      - -c
+      - effective_cache_size=192MB
+      - -c
+      - log_min_duration_statement=2000
+    mem_limit: 256m
+
+  redis:
+    logging: *default-logging
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --save
+      - "300"
+      - "1"
+      - --maxmemory
+      - 48mb
+      - --maxmemory-policy
+      - noeviction
+    mem_limit: 64m
+
+  web:
+    logging: *default-logging
+    mem_limit: 288m
+    cpus: "0.8"
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=192"
+
+  worker:
+    logging: *default-logging
+    mem_limit: 800m
+    cpus: "1.6"
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=192"
+      # One conversion at a time: each LibreOffice or FFmpeg child can take
+      # 200-400 MB on its own.
+      WORKER_CONCURRENCY: "1"
+      JOB_TIMEOUT_SEC: "900"

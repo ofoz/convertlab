@@ -1,0 +1,55 @@
+{
+  "name": "convertlab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Self-hosted file conversion service for friends and small teams",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "npm run build:web && npm run build:server",
+    "build:web": "vite build --config web/vite.config.ts",
+    "build:server": "tsc -p tsconfig.server.json && node scripts/copy-server-assets.mjs",
+    "dev": "node --watch --disable-warning=ExperimentalWarning src/index.ts",
+    "start": "node --disable-warning=ExperimentalWarning dist/server/index.js",
+    "worker": "node --disable-warning=ExperimentalWarning dist/server/worker-main.js",
+    "test": "node --test --disable-warning=ExperimentalWarning \"tests/*.test.ts\"",
+    "test:unit": "node --test --disable-warning=ExperimentalWarning tests/unit.test.ts",
+    "test:converters": "node --test --disable-warning=ExperimentalWarning tests/converters.test.ts",
+    "test:api": "node --test --disable-warning=ExperimentalWarning tests/api.test.ts",
+    "test:pdf": "node --test --disable-warning=ExperimentalWarning tests/pdf-tables.test.ts",
+    "doctor": "node --disable-warning=ExperimentalWarning src/doctor.ts",
+    "doctor:dist": "node dist/server/doctor.js",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/csrf-protection": "^7.1.0",
+    "@fastify/formbody": "^8.0.2",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/multipart": "^9.4.0",
+    "@fastify/rate-limit": "^10.3.0",
+    "@fastify/static": "^10.1.12",
+    "@fastify/view": "^11.1.1",
+    "@types/pg": "^8.23.1",
+    "bullmq": "^6.7.8",
+    "ejs": "^3.1.10",
+    "fastify": "^5.7.1",
+    "ioredis": "^6.0.0",
+    "pg": "^8.23.1",
+    "sharp": "^0.35.5",
+    "yazl": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/yazl": "^3.3.1",
+    "@vitejs/plugin-react": "^5.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.8"
+  }
+}

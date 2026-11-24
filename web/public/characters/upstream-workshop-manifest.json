@@ -1,0 +1,961 @@
+{
+  "version": 7,
+  "generatedOn": "2026-11-13",
+  "assets": [
+    {
+      "key": "workshop-map-atlas",
+      "file": "public-rooms-atlas.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "57993235514e01bf176836adb6b756724a6364f023b48bbde8db9a81af7166e3",
+      "runtime": {
+        "file": "public-rooms-atlas.webp",
+        "sha256": "70b10ddb2bdbbc250f76e667404ab1e474c7a69f504ffa0cb8076a6c553ad3c1"
+      },
+      "model": "Codex built-in image generation",
+      "modelVersionExposed": false,
+      "sourceId": "exec-3fe596af-6228-4b06-87d1-6210b2abbcee"
+    },
+    {
+      "key": "workshop-room-atlas",
+      "file": "themed-rooms-atlas.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "1bc4ece284924837f4fba6b9f64bfa061d200e96fa77a2c590d19098cd78ef42",
+      "runtime": {
+        "file": "themed-rooms-atlas.webp",
+        "sha256": "ceb368c14035e220b55add49a35b813ef998f302f3c5cb82c25167e092f34a39"
+      },
+      "model": "Codex built-in image generation",
+      "modelVersionExposed": false,
+      "sourceId": "exec-09907cdd-adf6-4028-b23e-d74379cca9e4"
+    },
+    {
+      "key": "workshop-resident-atlas",
+      "file": "residents-atlas-builtin.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "709be979f3d3ebcbdad3304fe34d95e69ea1edb0704c03acae8c6065f653989b",
+      "runtime": {
+        "file": "residents-atlas-builtin.webp",
+        "sha256": "9cb0fb673c34257718f8fb3f622093633817505c6cb620d2d276655bb47b7fd8"
+      },
+      "model": "Codex built-in image generation"
+    },
+    {
+      "key": "workshop-workstation-atlas",
+      "file": "workstations-rpg-atlas.png",
+      "width": 1374,
+      "height": 1145,
+      "sha256": "486125c1da4e61ba34cc1601de85c46a37ca156f4223c327bba9642b012eb8bd",
+      "runtime": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f"
+      },
+      "model": "Codex built-in image generation",
+      "sourceId": "exec-8c4fe3c7-dbee-45f4-af18-b1c7cb3b48fb",
+      "reference": "residents-atlas-builtin.png"
+    },
+    {
+      "key": "workshop-decor-atlas",
+      "file": "decor-atlas-builtin.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "28b06bed3e887fc68b5eaf72c797429067bbfbc645d47858db816e4fcc1fea0d",
+      "runtime": {
+        "file": "decor-atlas-builtin.webp",
+        "sha256": "0a77d29ed2d0fc9332081c1fc41816f79619efdcf6717ac5e7c8b2068971471a"
+      },
+      "model": "Codex built-in image generation",
+      "modelVersionExposed": false,
+      "sourceId": "exec-05972b28-3e94-40f8-a148-cadb44d8b477",
+      "reference": "themed-rooms-atlas.png"
+    },
+    {
+      "key": "workshop-office-atlas",
+      "file": "office-hires.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "514a9a968787583b49eaf24b5124ee6bf39d1372eaa45cb6f4a5190b4891a864",
+      "model": "Codex built-in image generation",
+      "modelVersionExposed": false,
+      "sourceId": "exec-fa10d3f9-2e19-4074-9a7c-7237034d5e8a",
+      "reference": "public-rooms-atlas.png",
+      "notes": "office-hires-notes.md",
+      "runtime": {
+        "file": "office-hires.webp",
+        "sha256": "6e92064de712eb5f4a927bdbfa331cb1c30e1211e1ff56232031cf8c0c7c1843"
+      }
+    },
+    {
+      "key": "workshop-walk-atlas",
+      "file": "walk-cycle-front-back.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "37db551ee0a26be8834e6c04911a352f8f5e8d17316f2a762f9a7c7918fd25ec",
+      "model": "Codex built-in image generation",
+      "modelVersionExposed": false,
+      "reference": "residents-atlas-builtin.png",
+      "notes": "walk-cycle-notes.md",
+      "runtime": {
+        "file": "walk-cycle-front-back.webp",
+        "sha256": "10b905aa3e3801f7ea5eed1634991720abe4480d06754b4d6846e76b3e30d500"
+      },
+      "correctionNotes": "leisure-actions-notes.md: 正面两行已修正多出的手，其余像素不变。"
+    },
+    {
+      "key": "workshop-walk-side-atlas",
+      "file": "walk-cycle-side.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "01ea3d11f0b25f234aab2025ade733428cc3e9eb23d6f3f9c3b59f62933fef28",
+      "model": "Codex built-in image generation",
+      "modelVersionExposed": false,
+      "reference": "residents-atlas-builtin.png",
+      "notes": "walk-cycle-notes.md",
+      "runtime": {
+        "file": "walk-cycle-side.webp",
+        "sha256": "d72ad72221ea8385b7475bfedcc93e271ea5d6b59ab80b257974f802f38606d0"
+      }
+    },
+    {
+      "key": "workshop-walk-mid-atlas",
+      "file": "walk-cycle-side-mid.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "8b5435613758c7448a44ecbdf4200e556391b673eeaa8b6d6112c3ddb7f4f40f",
+      "model": "Codex built-in image generation",
+      "modelVersionExposed": false,
+      "reference": "walk-cycle-side.png",
+      "notes": "walk-cycle-side-mid-notes.md",
+      "runtime": {
+        "file": "walk-cycle-side-mid.webp",
+        "sha256": "379edfcd850bf73c377c028a14d28a493998b58a0531c7adcc65ca2ed5929400"
+      }
+    },
+    {
+      "key": "workshop-leisure-atlas",
+      "file": "leisure-actions.png",
+      "width": 1536,
+      "height": 1024,
+      "model": "Codex built-in image generation",
+      "modelVersionExposed": false,
+      "reference": "residents-atlas-builtin.png",
+      "notes": "leisure-actions-notes.md",
+      "sha256": "9b268d224f4e2e392d622f15c42155e4035f65ed9aa8659fb386f71d1503d098",
+      "runtime": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34"
+      }
+    }
+  ],
+  "logo": {
+    "file": "docs/brand/logo-simple.png",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "bad2e5b2a63fd163a41303d4bdc10eb6a412c299304eb52e8a3c8e36a838abeb",
+    "model": "Codex built-in image generation",
+    "sourceId": "exec-5fdd00b9-3d6e-4880-9b4c-132f8827945b",
+    "style": "Minimalist whale tail and a single star",
+    "modelVersionExposed": false
+  },
+  "atlasLayout": {
+    "columns": 2,
+    "rows": 2,
+    "rooms": [
+      "office",
+      "lounge",
+      "observatory",
+      "gallery"
+    ],
+    "doorways": "Office north/south at authored right-side passage; lounge and observatory north-centre; all openings remain unobstructed."
+  },
+  "residentLayout": {
+    "columns": 6,
+    "rows": 4,
+    "characters": [
+      "deepseek",
+      "claude",
+      "chatgpt",
+      "gemini",
+      "kimi",
+      "grok"
+    ],
+    "poses": [
+      "idle",
+      "walk-left",
+      "walk-right",
+      "work"
+    ],
+    "footAnchors": [
+      [
+        {
+          "x": 146,
+          "y": 248
+        },
+        {
+          "x": 139.5,
+          "y": 248
+        },
+        {
+          "x": 129.5,
+          "y": 248
+        },
+        {
+          "x": 127.5,
+          "y": 248
+        },
+        {
+          "x": 126,
+          "y": 248
+        },
+        {
+          "x": 132.5,
+          "y": 248
+        }
+      ],
+      [
+        {
+          "x": 136,
+          "y": 246
+        },
+        {
+          "x": 133,
+          "y": 247
+        },
+        {
+          "x": 122.5,
+          "y": 246
+        },
+        {
+          "x": 119.5,
+          "y": 246
+        },
+        {
+          "x": 120,
+          "y": 247
+        },
+        {
+          "x": 130.5,
+          "y": 246
+        }
+      ],
+      [
+        {
+          "x": 153,
+          "y": 245
+        },
+        {
+          "x": 148,
+          "y": 244
+        },
+        {
+          "x": 137.5,
+          "y": 245
+        },
+        {
+          "x": 135,
+          "y": 245
+        },
+        {
+          "x": 131,
+          "y": 245
+        },
+        {
+          "x": 132,
+          "y": 244
+        }
+      ],
+      [
+        {
+          "x": 146.5,
+          "y": 246
+        },
+        {
+          "x": 140.5,
+          "y": 246
+        },
+        {
+          "x": 121.5,
+          "y": 246
+        },
+        {
+          "x": 128,
+          "y": 246
+        },
+        {
+          "x": 126.5,
+          "y": 246
+        },
+        {
+          "x": 135,
+          "y": 246
+        }
+      ]
+    ],
+    "activeRows": [
+      0
+    ],
+    "deprecatedRows": {
+      "rows": [
+        1,
+        2,
+        3
+      ],
+      "description": "已停用的旧帧：第 2～3 行旧行走、第 4 行读写；第 4 行洛可（Grok）有三只手的已知画错。运行时仅使用第 1 行待机。"
+    }
+  },
+  "weaveCreditsSpent": 22,
+  "note": "The user approved built-in generation for the current themed dormitories and public interiors, as well as residents and the minimalist logo. The exact built-in model version is not exposed. Earlier Image 2.6 logo and environment records are retained as superseded source history; Weave credits spent remain 22.",
+  "supersededImage26Logo": {
+    "width": 1024,
+    "height": 1024,
+    "sha256": "aafad03dc74a26b6587cbd0a1f4ea6f49eff5091e77fafb490dee021097815ab",
+    "model": "gpt-image-2.6",
+    "variant": "Sunburst",
+    "predictionId": "f3d1c16a-56fb-4faf-a49d-139a45fcb95a"
+  },
+  "workstationLayout": {
+    "columns": 6,
+    "rows": 5,
+    "characters": [
+      "deepseek",
+      "claude",
+      "chatgpt",
+      "gemini",
+      "kimi",
+      "grok"
+    ],
+    "poses": [
+      "empty",
+      "work-a",
+      "work-b",
+      "work-c",
+      "waiting"
+    ],
+    "activities": {
+      "deepseek": "潮汐推演",
+      "claude": "羽笔校稿",
+      "chatgpt": "圆规制图",
+      "gemini": "棱镜译码",
+      "kimi": "月卷归档",
+      "grok": "机械检修"
+    },
+    "compositeRendering": "Seated heroine and matching desk/chair are a single transparent animation frame; route foot points remain on the floor south of the desk."
+  },
+  "mapRendering": {
+    "tileSize": 48,
+    "camera": "Parallel RPG Maker overhead/front view, complete furnished interiors",
+    "materialSource": [
+      "themed-rooms-atlas.png",
+      "public-rooms-atlas.png"
+    ],
+    "composition": "Six themed dormitories reflect their corresponding built-in visual-novel backgrounds. Complete public interiors retain furniture and architectural details without cropped furniture patches; transparent seated workstation sprites occupy the authored office floor islands. Gallery floor samples use clean marble away from decorations.",
+    "floorCoverage": "Entire world rectangle; rooms render over continuous marble, leaving no uncovered outdoor gaps.",
+    "labels": "No room plaques or resident nameplates in the map scene; the sidebar retains the roster and activity status."
+  },
+  "supersededImage26Environment": {
+    "key": "workshop-map-atlas",
+    "file": "manor-atlas-image26.png",
+    "width": 3072,
+    "height": 2048,
+    "sha256": "70dc003e25c0b10e5f5eb56be74ae2164120f48ea93ee2827130db15bb4b4106",
+    "model": "gpt-image-2.6",
+    "variant": "Sunburst",
+    "predictionId": "ba571a27-82d0-454a-8537-e41f687cd7f8",
+    "runtime": false,
+    "note": "Original generated environment preserved in the source repository; replaced by complete themed dormitory and public-interior atlases after user approval."
+  },
+  "roomLayout": {
+    "columns": 3,
+    "rows": 2,
+    "characters": [
+      "deepseek",
+      "claude",
+      "chatgpt",
+      "gemini",
+      "kimi",
+      "grok"
+    ],
+    "references": [
+      "assets/default/palace-night.webp",
+      "assets/default/bg-claude-writing-study.webp",
+      "assets/default/bg-gpt-collaboration-workshop.webp",
+      "assets/default/bg-gemini-twin-creative-studio.webp",
+      "assets/default/bg-kimi-moonlit-reading-study.webp",
+      "assets/default/bg-grok-electronics-studio.webp"
+    ],
+    "referenceInputMode": "First five references supplied as images; Grok reference transcribed from the inspected source into the generation prompt.",
+    "doorways": "South-centre, x50%; central walking lane and floor footpoint remain clear.",
+    "themes": {
+      "deepseek": "Blue-gold palace",
+      "claude": "Amber writing study",
+      "chatgpt": "Green-white collaboration room",
+      "gemini": "Blue-lilac twin-prism studio",
+      "kimi": "Chinese moonlit archive",
+      "grok": "Cyan mechanical workshop"
+    }
+  },
+  "decorLayout": {
+    "columns": 3,
+    "rows": 2,
+    "items": [
+      "palm",
+      "hydrangea",
+      "floor-lamp",
+      "bookcase",
+      "bench",
+      "armillary"
+    ],
+    "bounds": [
+      {
+        "x": 0.201171875,
+        "y": 0.021484375,
+        "width": 0.6328125,
+        "height": 0.955078125
+      },
+      {
+        "x": 0.251953125,
+        "y": 0.04296875,
+        "width": 0.494140625,
+        "height": 0.927734375
+      },
+      {
+        "x": 0.27734375,
+        "y": 0.01953125,
+        "width": 0.32421875,
+        "height": 0.9453125
+      },
+      {
+        "x": 0.091796875,
+        "y": 0.103515625,
+        "width": 0.822265625,
+        "height": 0.85546875
+      },
+      {
+        "x": 0.0859375,
+        "y": 0.1875,
+        "width": 0.859375,
+        "height": 0.685546875
+      },
+      {
+        "x": 0.21875,
+        "y": 0.01953125,
+        "width": 0.513671875,
+        "height": 0.953125
+      }
+    ],
+    "alphaBoundsThreshold": 24,
+    "rendering": "Complete furniture silhouettes, anchored at bottom centre. Decorations avoid rooms, door approaches, navigation segments and other furniture."
+  },
+  "walkLayout": {
+    "columns": 6,
+    "rows": 4,
+    "mirroredForLeft": true,
+    "frontBack": {
+      "poses": [
+        "front, left foot forward",
+        "front, right foot forward",
+        "back, left foot forward",
+        "back, right foot forward"
+      ],
+      "scale": 1.02,
+      "footAnchors": [
+        [
+          {
+            "x": 137,
+            "y": 250
+          },
+          {
+            "x": 130,
+            "y": 249
+          },
+          {
+            "x": 124,
+            "y": 252
+          },
+          {
+            "x": 125,
+            "y": 250
+          },
+          {
+            "x": 124.5,
+            "y": 250
+          },
+          {
+            "x": 120.5,
+            "y": 250
+          }
+        ],
+        [
+          {
+            "x": 137,
+            "y": 248
+          },
+          {
+            "x": 130,
+            "y": 247
+          },
+          {
+            "x": 124,
+            "y": 250
+          },
+          {
+            "x": 125,
+            "y": 250
+          },
+          {
+            "x": 124.5,
+            "y": 249
+          },
+          {
+            "x": 120.5,
+            "y": 249
+          }
+        ],
+        [
+          {
+            "x": 136,
+            "y": 250
+          },
+          {
+            "x": 129,
+            "y": 249
+          },
+          {
+            "x": 123,
+            "y": 251
+          },
+          {
+            "x": 125,
+            "y": 250
+          },
+          {
+            "x": 125,
+            "y": 250
+          },
+          {
+            "x": 120,
+            "y": 249
+          }
+        ],
+        [
+          {
+            "x": 136,
+            "y": 248
+          },
+          {
+            "x": 129,
+            "y": 248
+          },
+          {
+            "x": 123,
+            "y": 248
+          },
+          {
+            "x": 125,
+            "y": 249
+          },
+          {
+            "x": 125,
+            "y": 248
+          },
+          {
+            "x": 120,
+            "y": 248
+          }
+        ]
+      ]
+    },
+    "side": {
+      "poses": [
+        "side, near leg forward",
+        "side, far leg forward",
+        "side, passing",
+        "back, passing"
+      ],
+      "scale": 1.2,
+      "footAnchors": [
+        [
+          {
+            "x": 145.5,
+            "y": 236
+          },
+          {
+            "x": 137,
+            "y": 234
+          },
+          {
+            "x": 129,
+            "y": 236
+          },
+          {
+            "x": 129.5,
+            "y": 235
+          },
+          {
+            "x": 115.5,
+            "y": 235
+          },
+          {
+            "x": 115,
+            "y": 235
+          }
+        ],
+        [
+          {
+            "x": 145.5,
+            "y": 230
+          },
+          {
+            "x": 137,
+            "y": 230
+          },
+          {
+            "x": 129,
+            "y": 230
+          },
+          {
+            "x": 129.5,
+            "y": 231
+          },
+          {
+            "x": 115.5,
+            "y": 230
+          },
+          {
+            "x": 115,
+            "y": 230
+          }
+        ],
+        [
+          {
+            "x": 146,
+            "y": 232
+          },
+          {
+            "x": 136,
+            "y": 232
+          },
+          {
+            "x": 130,
+            "y": 232
+          },
+          {
+            "x": 127,
+            "y": 232
+          },
+          {
+            "x": 117,
+            "y": 232
+          },
+          {
+            "x": 118,
+            "y": 232
+          }
+        ],
+        [
+          {
+            "x": 143,
+            "y": 229
+          },
+          {
+            "x": 131,
+            "y": 229
+          },
+          {
+            "x": 127,
+            "y": 229
+          },
+          {
+            "x": 127,
+            "y": 229
+          },
+          {
+            "x": 112,
+            "y": 229
+          },
+          {
+            "x": 120,
+            "y": 229
+          }
+        ]
+      ]
+    },
+    "idleAnchors": [
+      {
+        "x": 143,
+        "y": 249
+      },
+      {
+        "x": 138,
+        "y": 249
+      },
+      {
+        "x": 129,
+        "y": 249
+      },
+      {
+        "x": 127,
+        "y": 249
+      },
+      {
+        "x": 126,
+        "y": 249
+      },
+      {
+        "x": 122,
+        "y": 249
+      }
+    ],
+    "sideMid": {
+      "poses": [
+        "side, half stride, near leg forward",
+        "side, half stride, far leg forward",
+        "side, passing, near leg lifted",
+        "side, passing, far leg lifted"
+      ],
+      "scale": 1.16,
+      "footAnchors": [
+        [
+          {
+            "x": 143,
+            "y": 238
+          },
+          {
+            "x": 134,
+            "y": 239
+          },
+          {
+            "x": 125.5,
+            "y": 239
+          },
+          {
+            "x": 128.5,
+            "y": 239
+          },
+          {
+            "x": 115,
+            "y": 239
+          },
+          {
+            "x": 112,
+            "y": 238
+          }
+        ],
+        [
+          {
+            "x": 143,
+            "y": 234
+          },
+          {
+            "x": 134,
+            "y": 234
+          },
+          {
+            "x": 125.5,
+            "y": 234
+          },
+          {
+            "x": 128.5,
+            "y": 234
+          },
+          {
+            "x": 115,
+            "y": 234
+          },
+          {
+            "x": 112,
+            "y": 234
+          }
+        ],
+        [
+          {
+            "x": 143,
+            "y": 232
+          },
+          {
+            "x": 134,
+            "y": 232
+          },
+          {
+            "x": 125.5,
+            "y": 232
+          },
+          {
+            "x": 127.5,
+            "y": 232
+          },
+          {
+            "x": 115,
+            "y": 232
+          },
+          {
+            "x": 113.5,
+            "y": 231
+          }
+        ],
+        [
+          {
+            "x": 143,
+            "y": 232
+          },
+          {
+            "x": 134,
+            "y": 230
+          },
+          {
+            "x": 125.5,
+            "y": 231
+          },
+          {
+            "x": 127.5,
+            "y": 231
+          },
+          {
+            "x": 115,
+            "y": 230
+          },
+          {
+            "x": 113.5,
+            "y": 231
+          }
+        ]
+      ]
+    }
+  },
+  "leisureLayout": {
+    "columns": 6,
+    "rows": 4,
+    "characters": [
+      "deepseek",
+      "claude",
+      "chatgpt",
+      "gemini",
+      "kimi",
+      "grok"
+    ],
+    "frames": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "description": "空闲且停在宿舍或公共区时，第 1→2→3→4 行各播 13 个计数，再在第 4 行收尾姿势停留 100 个计数，周期 152，期间不穿插待机；她停下后从第一帧起播；刚打开地图时六人依次起手，相邻两人相隔 20 个计数（约 0.6 秒）。暂停时帧计数停止、姿势定格；减少动态效果时静止显示第 4 行，缺图回退待机。每列四帧共用脚部横坐标与脚底高度的中位数锚点，比例按待机身高对齐后乘头身修正系数 0.92。静止待机与小头像沿用人物第 1 行锚点，正面行走过渡站姿使用 walk.idle。",
+    "activities": {
+      "deepseek": "用钢盆吃大白饭",
+      "claude": "看书",
+      "chatgpt": "双手捧起微型银河观测",
+      "gemini": "用魔法生成水晶",
+      "kimi": "用望远镜观星",
+      "grok": "挥斧头"
+    },
+    "scale": 0.9,
+    "footAnchors": [
+      [
+        {
+          "x": 142,
+          "y": 254
+        },
+        {
+          "x": 136,
+          "y": 254
+        },
+        {
+          "x": 127,
+          "y": 254.5
+        },
+        {
+          "x": 125,
+          "y": 253
+        },
+        {
+          "x": 118.5,
+          "y": 254
+        },
+        {
+          "x": 124.5,
+          "y": 251
+        }
+      ],
+      [
+        {
+          "x": 142,
+          "y": 254
+        },
+        {
+          "x": 136,
+          "y": 254
+        },
+        {
+          "x": 127,
+          "y": 254.5
+        },
+        {
+          "x": 125,
+          "y": 253
+        },
+        {
+          "x": 118.5,
+          "y": 254
+        },
+        {
+          "x": 124.5,
+          "y": 251
+        }
+      ],
+      [
+        {
+          "x": 142,
+          "y": 254
+        },
+        {
+          "x": 136,
+          "y": 254
+        },
+        {
+          "x": 127,
+          "y": 254.5
+        },
+        {
+          "x": 125,
+          "y": 253
+        },
+        {
+          "x": 118.5,
+          "y": 254
+        },
+        {
+          "x": 124.5,
+          "y": 251
+        }
+      ],
+      [
+        {
+          "x": 142,
+          "y": 254
+        },
+        {
+          "x": 136,
+          "y": 254
+        },
+        {
+          "x": 127,
+          "y": 254.5
+        },
+        {
+          "x": 125,
+          "y": 253
+        },
+        {
+          "x": 118.5,
+          "y": 254
+        },
+        {
+          "x": 124.5,
+          "y": 251
+        }
+      ]
+    ]
+  }
+}

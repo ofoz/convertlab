@@ -1,0 +1,1947 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/JAdpp/dsh-whale-galgame",
+  "commit": "bdfe1e481815b6292f48b3badb6c037ae7df4bca",
+  "license": "CC-BY-NC-SA-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "unofficialFanArt": true,
+  "rightsLimitation": "Project-made AI-assisted art licensed only to the extent the upstream maintainer holds applicable rights.",
+  "assets": [
+    {
+      "file": "deepseek-standing.webp",
+      "url": "/characters/deepseek-standing.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/maid-left.webp",
+      "sourcePath": "assets/default/maid-left.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Renamed upstream copy; no pixel changes. Upstream identifies its source as byte-identical maid-atelier art.",
+      "sha256": "af7bfd2e18505fc9d6f94cefd9febc92b31c1b2b66c756982d91fc7b93fb184c",
+      "width": 1122,
+      "height": 2019,
+      "bytes": 286224,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        8,
+        8,
+        1116,
+        2014
+      ],
+      "pose": "standing; one palm raised, other hand holds skirt"
+    },
+    {
+      "file": "claude.webp",
+      "url": "/characters/claude.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/claude-zipzippipe.webp",
+      "sourcePath": "assets/default/claude-zipzippipe.webp",
+      "authors": [
+        "ZipZipPipe",
+        "JAdpp / dsh-whale-galgame (cutout, crop and WebP preparation)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Renamed upstream copy; upstream removed white background, cropped figure, exported q95 WebP.",
+      "sha256": "d85403607bc7fcc167e964b1a8a0f918d8355025f833eb364ea1fc99476099c2",
+      "width": 1013,
+      "height": 1868,
+      "bytes": 454064,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        0,
+        0,
+        1013,
+        1868
+      ],
+      "originalArtistPost": "https://www.bilibili.com/opus/1233069202138464289"
+    },
+    {
+      "file": "gpt.webp",
+      "url": "/characters/gpt.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/gpt-zipzippipe.webp",
+      "sourcePath": "assets/default/gpt-zipzippipe.webp",
+      "authors": [
+        "ZipZipPipe",
+        "JAdpp / dsh-whale-galgame (cutout, crop and WebP preparation)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Renamed upstream copy; upstream removed white background, cropped figure, exported q95 WebP.",
+      "sha256": "f61f587e9eec4f193097b755c7309daedf5ff26398b181661c0f289caa00f2e5",
+      "width": 1012,
+      "height": 1856,
+      "bytes": 377694,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        0,
+        0,
+        1012,
+        1856
+      ],
+      "originalArtistPost": "https://www.bilibili.com/opus/1233069202138464289"
+    },
+    {
+      "file": "whale-cheerful.webp",
+      "url": "/characters/whale-cheerful.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-cheerful.webp",
+      "sourcePath": "assets/default/whale-cheerful.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Unmodified downloaded upstream expression variant.",
+      "sha256": "117ed691623da550075056963764cee7a4cd14318d5ab87ce63d11926b83aa4b",
+      "width": 935,
+      "height": 1682,
+      "bytes": 314854,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        6,
+        20,
+        931,
+        1657
+      ],
+      "pose": "standing expression variant: cheerful"
+    },
+    {
+      "file": "whale-serious.webp",
+      "url": "/characters/whale-serious.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-serious.webp",
+      "sourcePath": "assets/default/whale-serious.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Unmodified downloaded upstream expression variant.",
+      "sha256": "2974cc4a814f6b1f95d907d22f62d9e0094dd7e538b6145e7c8a1dbb6154de34",
+      "width": 935,
+      "height": 1682,
+      "bytes": 283052,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        57,
+        13,
+        909,
+        1666
+      ],
+      "pose": "standing expression variant: serious"
+    },
+    {
+      "file": "whale-exasperated.webp",
+      "url": "/characters/whale-exasperated.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-exasperated.webp",
+      "sourcePath": "assets/default/whale-exasperated.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Unmodified downloaded upstream expression variant.",
+      "sha256": "c627bea1c000d304a538f1d63a2cf244f73824496ca585e0bda91a91450b67aa",
+      "width": 935,
+      "height": 1682,
+      "bytes": 292488,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        29,
+        14,
+        923,
+        1676
+      ],
+      "pose": "standing expression variant: exasperated"
+    },
+    {
+      "file": "whale-starry.webp",
+      "url": "/characters/whale-starry.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-starry.webp",
+      "sourcePath": "assets/default/whale-starry.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Unmodified downloaded upstream expression variant.",
+      "sha256": "65a3bd1eb9ad4f8cb357af4825311f84e91be4f7f57deb5357fb79116bcad774",
+      "width": 935,
+      "height": 1682,
+      "bytes": 319384,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        0,
+        0,
+        918,
+        1682
+      ],
+      "pose": "standing expression variant: starry"
+    },
+    {
+      "file": "pet-dafeiyu.webp",
+      "url": "/characters/pet-dafeiyu.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Unmodified downloaded upstream atlas.",
+      "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+      "width": 2304,
+      "height": 3584,
+      "bytes": 1702028,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        14,
+        44,
+        2276,
+        3570
+      ],
+      "provenance": "Online source image, AI-assisted upstream, not generated locally."
+    },
+    {
+      "file": "leisure-actions.webp",
+      "url": "/characters/leisure-actions.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Unmodified downloaded upstream atlas.",
+      "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1162878,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        31,
+        4,
+        1518,
+        1022
+      ],
+      "provenance": "Online source image, AI-assisted upstream, not generated locally."
+    },
+    {
+      "file": "residents-atlas-builtin.webp",
+      "url": "/characters/residents-atlas-builtin.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/residents-atlas-builtin.webp",
+      "sourcePath": "assets/workshop/residents-atlas-builtin.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Unmodified downloaded upstream atlas.",
+      "sha256": "9cb0fb673c34257718f8fb3f622093633817505c6cb620d2d276655bb47b7fd8",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 1270330,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "provenance": "Online source image, AI-assisted upstream, not generated locally."
+    },
+    {
+      "file": "workstations-rpg-atlas.webp",
+      "url": "/characters/workstations-rpg-atlas.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Unmodified downloaded upstream atlas.",
+      "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+      "width": 1374,
+      "height": 1145,
+      "bytes": 1014430,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        31,
+        33,
+        1344,
+        1129
+      ],
+      "provenance": "Online source image, AI-assisted upstream, not generated locally."
+    },
+    {
+      "file": "crop-deepseek-standing.webp",
+      "url": "/characters/crop-deepseek-standing.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "b5f84f5c1026a7618b2d8194cd83b481b8a1d31610d6ac981ad147f056b7faf2",
+      "width": 384,
+      "height": 512,
+      "bytes": 149364,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        34,
+        45,
+        351,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          0,
+          0,
+          384,
+          512
+        ],
+        "column": 0,
+        "row": 0
+      },
+      "pose": "standing, hands together"
+    },
+    {
+      "file": "crop-deepseek-greeting-0.webp",
+      "url": "/characters/crop-deepseek-greeting-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "9e49b1dcf655eb22e2b55247edff24b27210b9b03bb95509f5586ae26992aafc",
+      "width": 384,
+      "height": 512,
+      "bytes": 149326,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        34,
+        44,
+        352,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          0,
+          512,
+          384,
+          1024
+        ],
+        "column": 0,
+        "row": 1
+      },
+      "pose": "standing, waving one hand"
+    },
+    {
+      "file": "crop-deepseek-greeting-1.webp",
+      "url": "/characters/crop-deepseek-greeting-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "b4d189b6a1a00bf3d8fd64e7684498493f18f7bdb46c67b67056c772fe2dc3cb",
+      "width": 384,
+      "height": 512,
+      "bytes": 147870,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        38,
+        43,
+        352,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          384,
+          512,
+          768,
+          1024
+        ],
+        "column": 1,
+        "row": 1
+      },
+      "pose": "standing, waving one hand"
+    },
+    {
+      "file": "crop-deepseek-work-0.webp",
+      "url": "/characters/crop-deepseek-work-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "405b8d0278445b2ceab12b7f851f3c968ac823ef8c99f1619dfdc14261bb54ba",
+      "width": 384,
+      "height": 512,
+      "bytes": 124896,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        37,
+        108,
+        345,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          1152,
+          512,
+          1536,
+          1024
+        ],
+        "column": 3,
+        "row": 1
+      },
+      "pose": "seated laptop work"
+    },
+    {
+      "file": "crop-deepseek-work-1.webp",
+      "url": "/characters/crop-deepseek-work-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "f89affe5f263f24e172d54e41eb58e20aa45e1f437e67df9c5f812198ce126cc",
+      "width": 384,
+      "height": 512,
+      "bytes": 122882,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        37,
+        108,
+        345,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          1536,
+          512,
+          1920,
+          1024
+        ],
+        "column": 4,
+        "row": 1
+      },
+      "pose": "seated laptop work, focused"
+    },
+    {
+      "file": "crop-deepseek-work-2.webp",
+      "url": "/characters/crop-deepseek-work-2.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "69cea17a2811169d8b3030393785abd34812ee9543ec7da50353952099964099",
+      "width": 384,
+      "height": 512,
+      "bytes": 121420,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        37,
+        108,
+        345,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          1920,
+          512,
+          2304,
+          1024
+        ],
+        "column": 5,
+        "row": 1
+      },
+      "pose": "seated laptop work, smiling"
+    },
+    {
+      "file": "crop-deepseek-idle.webp",
+      "url": "/characters/crop-deepseek-idle.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "c3709d0ac1d5c3b8db68fafee38c20df81802f1973d1f823c2c9d7d6eb8f8faf",
+      "width": 384,
+      "height": 512,
+      "bytes": 144888,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        39,
+        45,
+        353,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          1920,
+          0,
+          2304,
+          512
+        ],
+        "column": 5,
+        "row": 0
+      },
+      "pose": "standing, asleep with sleep bubble"
+    },
+    {
+      "file": "crop-deepseek-sleepy.webp",
+      "url": "/characters/crop-deepseek-sleepy.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "c501ac5fcee8ae51fff1add2271375400e22a16bf049ec3e7db004ecb10260ce",
+      "width": 384,
+      "height": 512,
+      "bytes": 146030,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        34,
+        44,
+        351,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          1536,
+          0,
+          1920,
+          512
+        ],
+        "column": 4,
+        "row": 0
+      },
+      "pose": "standing, rubbing eye"
+    },
+    {
+      "file": "crop-deepseek-meal-0.webp",
+      "url": "/characters/crop-deepseek-meal-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "b9f510202fb5636d0ca4fa393b3b90eb434f0059b404603510f334dae2f08029",
+      "width": 384,
+      "height": 512,
+      "bytes": 140078,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        46,
+        52,
+        346,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          0,
+          1024,
+          384,
+          1536
+        ],
+        "column": 0,
+        "row": 2
+      },
+      "pose": "eating rice"
+    },
+    {
+      "file": "crop-deepseek-meal-1.webp",
+      "url": "/characters/crop-deepseek-meal-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/pet-dafeiyu.webp",
+      "sourcePath": "assets/default/pet-dafeiyu.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "5ac0cfb67c3a831536243118e56c1c1fc3ae3b05776ede7d5e2369a2303b5002",
+      "width": 384,
+      "height": 512,
+      "bytes": 137432,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        46,
+        52,
+        346,
+        498
+      ],
+      "derivedFrom": {
+        "file": "pet-dafeiyu.webp",
+        "sha256": "3a83057aa89c39bf2b4f93ef87ec69caeeb69eaace1613b8c1de52b88f61dcad",
+        "cropBoxXYXY": [
+          384,
+          1024,
+          768,
+          1536
+        ],
+        "column": 1,
+        "row": 2
+      },
+      "pose": "eating rice, smiling"
+    },
+    {
+      "file": "crop-deepseek-leisure-0.webp",
+      "url": "/characters/crop-deepseek-leisure-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "8b1e0a214de410d836db8e850e14b5a9147806083871bdd234a1e165e1e9bb40",
+      "width": 256,
+      "height": 256,
+      "bytes": 45944,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        32,
+        11,
+        250,
+        255
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "column": 0,
+        "row": 0
+      },
+      "pose": "eating rice"
+    },
+    {
+      "file": "crop-deepseek-leisure-1.webp",
+      "url": "/characters/crop-deepseek-leisure-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "a030d323f97747d45de6df1fb7d77bbab381988a31ebc9033d79eb98d6a4e770",
+      "width": 256,
+      "height": 256,
+      "bytes": 46498,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        32,
+        9,
+        250,
+        255
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          0,
+          256,
+          256,
+          512
+        ],
+        "column": 0,
+        "row": 1
+      },
+      "pose": "eating rice"
+    },
+    {
+      "file": "crop-deepseek-leisure-2.webp",
+      "url": "/characters/crop-deepseek-leisure-2.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "753ae5a4bb1a1a06a6c8e6ec6ef581a72b7b60ee9fdec41a760771a9322ec746",
+      "width": 256,
+      "height": 256,
+      "bytes": 46616,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        32,
+        9,
+        251,
+        254
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          0,
+          512,
+          256,
+          768
+        ],
+        "column": 0,
+        "row": 2
+      },
+      "pose": "eating rice"
+    },
+    {
+      "file": "crop-deepseek-leisure-3.webp",
+      "url": "/characters/crop-deepseek-leisure-3.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "861e27a2b14c957715841fca429c79c7741155707e6e0981d479526958d4ade5",
+      "width": 256,
+      "height": 256,
+      "bytes": 46854,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        31,
+        10,
+        253,
+        254
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          0,
+          768,
+          256,
+          1024
+        ],
+        "column": 0,
+        "row": 3
+      },
+      "pose": "eating rice"
+    },
+    {
+      "file": "crop-deepseek-desk-work-0.webp",
+      "url": "/characters/crop-deepseek-desk-work-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "8166e979164bd47c8c546185f8b51855e4d7e03bb21decb30a3787d61b1879c5",
+      "width": 229,
+      "height": 229,
+      "bytes": 37442,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        31,
+        27,
+        213,
+        207
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          0,
+          229,
+          229,
+          458
+        ],
+        "column": 0,
+        "row": 1
+      },
+      "pose": "seated at themed desk; no computer screen"
+    },
+    {
+      "file": "crop-deepseek-desk-work-1.webp",
+      "url": "/characters/crop-deepseek-desk-work-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "ee18b1b11aea0aebd22dd7befd6488a8a5e4f762f3774a128ed6322d76b0f392",
+      "width": 229,
+      "height": 229,
+      "bytes": 37572,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        32,
+        23,
+        211,
+        206
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          0,
+          458,
+          229,
+          687
+        ],
+        "column": 0,
+        "row": 2
+      },
+      "pose": "seated at themed desk; no computer screen"
+    },
+    {
+      "file": "crop-deepseek-desk-work-2.webp",
+      "url": "/characters/crop-deepseek-desk-work-2.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "077471607801fa0a055d1825ddb7cebcb7f19c47ba6668502119bbfa121930ac",
+      "width": 229,
+      "height": 229,
+      "bytes": 37032,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        32,
+        21,
+        214,
+        204
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          0,
+          687,
+          229,
+          916
+        ],
+        "column": 0,
+        "row": 3
+      },
+      "pose": "seated at themed desk; no computer screen"
+    },
+    {
+      "file": "crop-claude-leisure-0.webp",
+      "url": "/characters/crop-claude-leisure-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "3bbfe416ab554f62e527188c4e4874cae351b27ee07036ff2bd09812f28847f4",
+      "width": 256,
+      "height": 256,
+      "bytes": 44418,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        30,
+        15,
+        235,
+        255
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          256,
+          0,
+          512,
+          256
+        ],
+        "column": 1,
+        "row": 0
+      },
+      "pose": "reading"
+    },
+    {
+      "file": "crop-claude-leisure-1.webp",
+      "url": "/characters/crop-claude-leisure-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "31bf568c039d62756dbe00cb6694398fd36a558da3d35f9a88f43bb08dad2829",
+      "width": 256,
+      "height": 256,
+      "bytes": 46718,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        28,
+        13,
+        236,
+        255
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          256,
+          256,
+          512,
+          512
+        ],
+        "column": 1,
+        "row": 1
+      },
+      "pose": "reading"
+    },
+    {
+      "file": "crop-claude-leisure-2.webp",
+      "url": "/characters/crop-claude-leisure-2.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "7b46df52a1a70be8d852c64f1ec3022c30d27cec76eb288a3ccf487d5a07681c",
+      "width": 256,
+      "height": 256,
+      "bytes": 46050,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        29,
+        12,
+        237,
+        254
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          256,
+          512,
+          512,
+          768
+        ],
+        "column": 1,
+        "row": 2
+      },
+      "pose": "reading"
+    },
+    {
+      "file": "crop-claude-leisure-3.webp",
+      "url": "/characters/crop-claude-leisure-3.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "3ed05f19fbef1ac62db6d211c4a17620b5077c8f7cb27d877b2a571c12201f57",
+      "width": 256,
+      "height": 256,
+      "bytes": 46114,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        29,
+        13,
+        236,
+        254
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          256,
+          768,
+          512,
+          1024
+        ],
+        "column": 1,
+        "row": 3
+      },
+      "pose": "reading"
+    },
+    {
+      "file": "crop-claude-desk-work-0.webp",
+      "url": "/characters/crop-claude-desk-work-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "41f4eb5960ab3f72bd48e038edc43d46dfd1d5fb542de0a91ba063b43effe32a",
+      "width": 229,
+      "height": 229,
+      "bytes": 36814,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        30,
+        29,
+        207,
+        206
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          229,
+          229,
+          458,
+          458
+        ],
+        "column": 1,
+        "row": 1
+      },
+      "pose": "seated at themed desk; no computer screen"
+    },
+    {
+      "file": "crop-claude-desk-work-1.webp",
+      "url": "/characters/crop-claude-desk-work-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "56db67bc0e4fb8e3145bb6d91bdde7acfe93e2ec488e145bc5d9f12de03d1a1b",
+      "width": 229,
+      "height": 229,
+      "bytes": 37622,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        29,
+        28,
+        206,
+        205
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          229,
+          458,
+          458,
+          687
+        ],
+        "column": 1,
+        "row": 2
+      },
+      "pose": "seated at themed desk; no computer screen"
+    },
+    {
+      "file": "crop-claude-desk-work-2.webp",
+      "url": "/characters/crop-claude-desk-work-2.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "64adf660e96eed07bd7eb45b6543206dc384e42831e2ceccfce7098c359cf81c",
+      "width": 229,
+      "height": 229,
+      "bytes": 36758,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        30,
+        21,
+        205,
+        204
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          229,
+          687,
+          458,
+          916
+        ],
+        "column": 1,
+        "row": 3
+      },
+      "pose": "seated at themed desk; no computer screen"
+    },
+    {
+      "file": "crop-gpt-leisure-0.webp",
+      "url": "/characters/crop-gpt-leisure-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "6d9f0de5e5e6934594cf99d0ee18f38a9885bdf46956b383b27cf6ac2b699452",
+      "width": 256,
+      "height": 256,
+      "bytes": 49038,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        14,
+        4,
+        239,
+        256
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          512,
+          0,
+          768,
+          256
+        ],
+        "column": 2,
+        "row": 0
+      },
+      "pose": "holding miniature galaxy"
+    },
+    {
+      "file": "crop-gpt-leisure-1.webp",
+      "url": "/characters/crop-gpt-leisure-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "a4adcbefec42c0d87861baa7b1e2a86770ff2cb864120b2fd39ea3606234d698",
+      "width": 256,
+      "height": 256,
+      "bytes": 49706,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        14,
+        2,
+        236,
+        256
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          512,
+          256,
+          768,
+          512
+        ],
+        "column": 2,
+        "row": 1
+      },
+      "pose": "holding miniature galaxy"
+    },
+    {
+      "file": "crop-gpt-leisure-2.webp",
+      "url": "/characters/crop-gpt-leisure-2.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "13272ac3cd9a87b87058ee4ee75b966c334122ac828620ccaa0e8c4e988e8934",
+      "width": 256,
+      "height": 256,
+      "bytes": 50022,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        14,
+        0,
+        239,
+        255
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          512,
+          512,
+          768,
+          768
+        ],
+        "column": 2,
+        "row": 2
+      },
+      "pose": "holding miniature galaxy"
+    },
+    {
+      "file": "crop-gpt-leisure-3.webp",
+      "url": "/characters/crop-gpt-leisure-3.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/leisure-actions.webp",
+      "sourcePath": "assets/workshop/leisure-actions.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "511c9b95437da7cfc51eb780c344099c87bd9990688d73ca16ca13ecd2f8b3bf",
+      "width": 256,
+      "height": 256,
+      "bytes": 49144,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        14,
+        1,
+        239,
+        254
+      ],
+      "derivedFrom": {
+        "file": "leisure-actions.webp",
+        "sha256": "82b071fec1631b806b2b4a926bc06823685fe2359bc709e2a598f828f5d38a34",
+        "cropBoxXYXY": [
+          512,
+          768,
+          768,
+          1024
+        ],
+        "column": 2,
+        "row": 3
+      },
+      "pose": "holding miniature galaxy"
+    },
+    {
+      "file": "crop-gpt-desk-work-0.webp",
+      "url": "/characters/crop-gpt-desk-work-0.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "fc58b34b15a8f81bf6fd288bccd49f5d4118280246b4957e827d08932ebe00bb",
+      "width": 229,
+      "height": 229,
+      "bytes": 38850,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        25,
+        15,
+        204,
+        209
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          458,
+          229,
+          687,
+          458
+        ],
+        "column": 2,
+        "row": 1
+      },
+      "pose": "seated at themed desk; no computer screen"
+    },
+    {
+      "file": "crop-gpt-desk-work-1.webp",
+      "url": "/characters/crop-gpt-desk-work-1.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "3da9bfa9591562eb92205de5aec7bccb9707e9561658d46bbe803c59aa46f58d",
+      "width": 229,
+      "height": 229,
+      "bytes": 40042,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        27,
+        11,
+        204,
+        206
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          458,
+          458,
+          687,
+          687
+        ],
+        "column": 2,
+        "row": 2
+      },
+      "pose": "seated at themed desk; no computer screen"
+    },
+    {
+      "file": "crop-gpt-desk-work-2.webp",
+      "url": "/characters/crop-gpt-desk-work-2.webp",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/workstations-rpg-atlas.webp",
+      "sourcePath": "assets/workshop/workstations-rpg-atlas.webp",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame",
+        "JAdpp / dsh-whale-galgame; upstream Codex built-in image generation (exact model version not exposed)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local exact cell crop; no repainting or pose synthesis; exported as lossless WebP.",
+      "sha256": "040210c4e8f8a446ad42a962dfc25607317122bececff4cc9cab09c13e809c97",
+      "width": 229,
+      "height": 229,
+      "bytes": 39332,
+      "hasAlpha": true,
+      "hasTransparentPixels": true,
+      "alphaBounds": [
+        27,
+        16,
+        205,
+        208
+      ],
+      "derivedFrom": {
+        "file": "workstations-rpg-atlas.webp",
+        "sha256": "69b59787434b829ac04301635b5ba12c39f1ffed77003b2c9ad81db7e37b083f",
+        "cropBoxXYXY": [
+          458,
+          687,
+          687,
+          916
+        ],
+        "column": 2,
+        "row": 3
+      },
+      "pose": "seated at themed desk; no computer screen"
+    }
+  ],
+  "sourceDocuments": [
+    {
+      "file": "upstream-NOTICE.md",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/NOTICE.md",
+      "sha256": "e529b7d8476274e88786d6ccf36cda48cedfa3b41efea20f21bd1102eb7131c2",
+      "bytes": 17972,
+      "modifications": "None; exact downloaded source text."
+    },
+    {
+      "file": "upstream-LICENSE.md",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/LICENSE.md",
+      "sha256": "9b843c9b48803325eb79f89410de369ef7b7f8e74f79171af73bcfa199acfb12",
+      "bytes": 6033,
+      "modifications": "None; exact downloaded source text."
+    },
+    {
+      "file": "upstream-default-README.md",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/README.md",
+      "sha256": "42e29740fd1ccbc8192f525ca48d7c66832018c6d955f4ca06287d6ab31dfa5d",
+      "bytes": 5835,
+      "modifications": "None; exact downloaded source text."
+    },
+    {
+      "file": "upstream-workshop-README.md",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/README.md",
+      "sha256": "66421f439c0fc9624c035cf80d2a5c37e5a660c5ec02f7ba943dc62871f27649",
+      "bytes": 11894,
+      "modifications": "None; exact downloaded source text."
+    },
+    {
+      "file": "upstream-workshop-manifest.json",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/workshop/manifest.json",
+      "sha256": "cf83c6236d234b1de96ea1f853bfe328d22b03692f36b3c4a01b12a47641b995",
+      "bytes": 22252,
+      "modifications": "None; exact downloaded source text."
+    },
+    {
+      "file": "licenses/dsh-deep-whale-LICENSE.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/licenses/dsh-deep-whale-LICENSE.txt",
+      "sha256": "1349a4b6148492b44f629e64eed676612e234fe9a839e4f3b277c1482c8849f1",
+      "bytes": 20849,
+      "modifications": "None; exact downloaded source text."
+    },
+    {
+      "file": "licenses/dsh-deep-whale-NOTICE.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/licenses/dsh-deep-whale-NOTICE.txt",
+      "sha256": "45e48ba5c3fc59e03c1a9559eaa04686f8d340d684f2970ce384a7578e7ef6dd",
+      "bytes": 1325,
+      "modifications": "None; exact downloaded source text."
+    }
+  ],
+  "poseLimits": {
+    "openarms": "No verified receiving-file open-both-arms frame. Falling pose is not relabeled as receiving.",
+    "computerWork": "pet-dafeiyu row 1 columns 3,4,5 depict seated laptop work. Workshop desks have no screens."
+  },
+  "localDerivedAssets": [
+    {
+      "file": "display/384/deepseek-standing.webp",
+      "url": "/characters/display/384/deepseek-standing.webp",
+      "sourceFile": "deepseek-standing.webp",
+      "sourceSha256": "af7bfd2e18505fc9d6f94cefd9febc92b31c1b2b66c756982d91fc7b93fb184c",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/maid-left.webp",
+      "width": 384,
+      "height": 691,
+      "bytes": 76134,
+      "sha256": "1de4bd1397876bfb51defdb2c11b51edb5b240f7ac70a034403c382fd99cc9a7",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of deepseek-standing.webp; resized proportionally from 1122x2019 to 384x691, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 1122,
+      "sourceHeight": 2019
+    },
+    {
+      "file": "display/768/deepseek-standing.webp",
+      "url": "/characters/display/768/deepseek-standing.webp",
+      "sourceFile": "deepseek-standing.webp",
+      "sourceSha256": "af7bfd2e18505fc9d6f94cefd9febc92b31c1b2b66c756982d91fc7b93fb184c",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/maid-left.webp",
+      "width": 768,
+      "height": 1382,
+      "bytes": 201922,
+      "sha256": "e09140e965518cab815cf6e9bae74be5ef302c4060c28cc57193c370b2fb932a",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of deepseek-standing.webp; resized proportionally from 1122x2019 to 768x1382, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 1122,
+      "sourceHeight": 2019
+    },
+    {
+      "file": "display/384/claude.webp",
+      "url": "/characters/display/384/claude.webp",
+      "sourceFile": "claude.webp",
+      "sourceSha256": "d85403607bc7fcc167e964b1a8a0f918d8355025f833eb364ea1fc99476099c2",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/claude-zipzippipe.webp",
+      "width": 384,
+      "height": 708,
+      "bytes": 92510,
+      "sha256": "ac9f77c62c004f369c442df06c983f7bf0e003bbcfdd66aa57b28d748fbc00dc",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "ZipZipPipe",
+        "JAdpp / dsh-whale-galgame (cutout, crop and WebP preparation)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of claude.webp; resized proportionally from 1013x1868 to 384x708, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 1013,
+      "sourceHeight": 1868
+    },
+    {
+      "file": "display/768/claude.webp",
+      "url": "/characters/display/768/claude.webp",
+      "sourceFile": "claude.webp",
+      "sourceSha256": "d85403607bc7fcc167e964b1a8a0f918d8355025f833eb364ea1fc99476099c2",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/claude-zipzippipe.webp",
+      "width": 768,
+      "height": 1416,
+      "bytes": 258148,
+      "sha256": "69f6fb18c1efc9ebf664b46f29aea885d5d98881833b985d620cd3f85a420141",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "ZipZipPipe",
+        "JAdpp / dsh-whale-galgame (cutout, crop and WebP preparation)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of claude.webp; resized proportionally from 1013x1868 to 768x1416, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 1013,
+      "sourceHeight": 1868
+    },
+    {
+      "file": "display/384/gpt.webp",
+      "url": "/characters/display/384/gpt.webp",
+      "sourceFile": "gpt.webp",
+      "sourceSha256": "f61f587e9eec4f193097b755c7309daedf5ff26398b181661c0f289caa00f2e5",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/gpt-zipzippipe.webp",
+      "width": 384,
+      "height": 704,
+      "bytes": 88410,
+      "sha256": "317946863cf2890539846c994d0c3cecf17648ade8acb7284527a0e0753a41e3",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "ZipZipPipe",
+        "JAdpp / dsh-whale-galgame (cutout, crop and WebP preparation)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of gpt.webp; resized proportionally from 1012x1856 to 384x704, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 1012,
+      "sourceHeight": 1856
+    },
+    {
+      "file": "display/768/gpt.webp",
+      "url": "/characters/display/768/gpt.webp",
+      "sourceFile": "gpt.webp",
+      "sourceSha256": "f61f587e9eec4f193097b755c7309daedf5ff26398b181661c0f289caa00f2e5",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/gpt-zipzippipe.webp",
+      "width": 768,
+      "height": 1409,
+      "bytes": 226970,
+      "sha256": "6f896ae8667cd4bfddf706a04271c3865aa79897030822e709c2d42fc3f110d2",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "ZipZipPipe",
+        "JAdpp / dsh-whale-galgame (cutout, crop and WebP preparation)"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of gpt.webp; resized proportionally from 1012x1856 to 768x1409, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 1012,
+      "sourceHeight": 1856
+    },
+    {
+      "file": "display/384/whale-cheerful.webp",
+      "url": "/characters/display/384/whale-cheerful.webp",
+      "sourceFile": "whale-cheerful.webp",
+      "sourceSha256": "117ed691623da550075056963764cee7a4cd14318d5ab87ce63d11926b83aa4b",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-cheerful.webp",
+      "width": 384,
+      "height": 691,
+      "bytes": 77608,
+      "sha256": "da9d35ee7ef2da2c1349a58736e0967f3d6a7c43c12566ab58540c22f9a0f081",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of whale-cheerful.webp; resized proportionally from 935x1682 to 384x691, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 935,
+      "sourceHeight": 1682
+    },
+    {
+      "file": "display/768/whale-cheerful.webp",
+      "url": "/characters/display/768/whale-cheerful.webp",
+      "sourceFile": "whale-cheerful.webp",
+      "sourceSha256": "117ed691623da550075056963764cee7a4cd14318d5ab87ce63d11926b83aa4b",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-cheerful.webp",
+      "width": 768,
+      "height": 1382,
+      "bytes": 213074,
+      "sha256": "9bcefc9bf077b15ba3222a37e78a310f301da71a85eb96d2f1345f5d38fdbd9e",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of whale-cheerful.webp; resized proportionally from 935x1682 to 768x1382, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 935,
+      "sourceHeight": 1682
+    },
+    {
+      "file": "display/384/whale-serious.webp",
+      "url": "/characters/display/384/whale-serious.webp",
+      "sourceFile": "whale-serious.webp",
+      "sourceSha256": "2974cc4a814f6b1f95d907d22f62d9e0094dd7e538b6145e7c8a1dbb6154de34",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-serious.webp",
+      "width": 384,
+      "height": 691,
+      "bytes": 73040,
+      "sha256": "b916a6b65a4979382d93cdaed5d599597cde10d232b5dba96f89994c5c44cf75",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of whale-serious.webp; resized proportionally from 935x1682 to 384x691, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 935,
+      "sourceHeight": 1682
+    },
+    {
+      "file": "display/768/whale-serious.webp",
+      "url": "/characters/display/768/whale-serious.webp",
+      "sourceFile": "whale-serious.webp",
+      "sourceSha256": "2974cc4a814f6b1f95d907d22f62d9e0094dd7e538b6145e7c8a1dbb6154de34",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-serious.webp",
+      "width": 768,
+      "height": 1382,
+      "bytes": 194974,
+      "sha256": "139459d4a0be3caa3bb8db13a564282a706fe497c363be5fb2b68f4ee57c8ba7",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of whale-serious.webp; resized proportionally from 935x1682 to 768x1382, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 935,
+      "sourceHeight": 1682
+    },
+    {
+      "file": "display/384/whale-exasperated.webp",
+      "url": "/characters/display/384/whale-exasperated.webp",
+      "sourceFile": "whale-exasperated.webp",
+      "sourceSha256": "c627bea1c000d304a538f1d63a2cf244f73824496ca585e0bda91a91450b67aa",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-exasperated.webp",
+      "width": 384,
+      "height": 691,
+      "bytes": 74812,
+      "sha256": "617d82d7e2bba59fbad692f8fbbb7e276e4bf59143bb5dc79eab34a84bf83ffa",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of whale-exasperated.webp; resized proportionally from 935x1682 to 384x691, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 935,
+      "sourceHeight": 1682
+    },
+    {
+      "file": "display/768/whale-exasperated.webp",
+      "url": "/characters/display/768/whale-exasperated.webp",
+      "sourceFile": "whale-exasperated.webp",
+      "sourceSha256": "c627bea1c000d304a538f1d63a2cf244f73824496ca585e0bda91a91450b67aa",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-exasperated.webp",
+      "width": 768,
+      "height": 1382,
+      "bytes": 199108,
+      "sha256": "d3ed6225ad7e04dc472c042f04f98cf91219a527c5ea839d2abf6f29d34d45aa",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of whale-exasperated.webp; resized proportionally from 935x1682 to 768x1382, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 935,
+      "sourceHeight": 1682
+    },
+    {
+      "file": "display/384/whale-starry.webp",
+      "url": "/characters/display/384/whale-starry.webp",
+      "sourceFile": "whale-starry.webp",
+      "sourceSha256": "65a3bd1eb9ad4f8cb357af4825311f84e91be4f7f57deb5357fb79116bcad774",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-starry.webp",
+      "width": 384,
+      "height": 691,
+      "bytes": 80476,
+      "sha256": "1f6ca9ebc599310e150dfad644bee8536da6be4150a2499a16f7aa5c563ecbcd",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of whale-starry.webp; resized proportionally from 935x1682 to 384x691, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 935,
+      "sourceHeight": 1682
+    },
+    {
+      "file": "display/768/whale-starry.webp",
+      "url": "/characters/display/768/whale-starry.webp",
+      "sourceFile": "whale-starry.webp",
+      "sourceSha256": "65a3bd1eb9ad4f8cb357af4825311f84e91be4f7f57deb5357fb79116bcad774",
+      "sourceUrl": "https://raw.githubusercontent.com/JAdpp/dsh-whale-galgame/bdfe1e481815b6292f48b3badb6c037ae7df4bca/assets/default/whale-starry.webp",
+      "width": 768,
+      "height": 1382,
+      "bytes": 219386,
+      "sha256": "55cdddb8c8669add3dd1c72f33c8d8f7a8b4a15a2bc663facaca8d54b4fd9467",
+      "hasAlpha": true,
+      "format": "WebP",
+      "quality": 90,
+      "resampling": "Lanczos",
+      "authors": [
+        "上善",
+        "ZipZipPipe",
+        "Small-tailqwq / dsh-deep-whale",
+        "JAdpp / dsh-whale-galgame"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "modifications": "Local responsive display derivative of whale-starry.webp; resized proportionally from 935x1682 to 768x1382, Lanczos resampling, lossy WebP quality 90; original source is unchanged.",
+      "sourceWidth": 935,
+      "sourceHeight": 1682
+    }
+  ]
+}
