@@ -71,6 +71,8 @@ test('转换参数带边界校验与默认值', () => {
   assert.equal(parseOptions({ pdf: {} }, 'docx').pdf?.ocr, false);
   assert.equal(parseOptions({ pdf: { ocr: true } }, 'docx').pdf?.ocr, true);
   assert.equal(parseOptions({ pdf: { ocr: 'yes' } }, 'docx').pdf?.ocr, false);
+  assert.equal(parseOptions({ pdf: {} }, 'xlsx').pdf?.sheetMode, 'single', 'PDF 转 Excel 默认单工作表');
+  assert.equal(parseOptions({ pdf: { sheetMode: 'page' } }, 'xlsx').pdf?.sheetMode, 'page');
 
   const pdfOut = parseOptions({ document: { pdfLayout: 'layout' } }, 'pdf');
   assert.equal(pdfOut.document?.pdfLayout, 'layout');
@@ -78,6 +80,7 @@ test('转换参数带边界校验与默认值', () => {
   assert.throws(() => parseOptions({ image: { quality: 0 } }, 'png'), /图片质量/);
   assert.throws(() => parseOptions({ image: { background: 'red' } }, 'png'), /背景色/);
   assert.throws(() => parseOptions({ pdf: { mode: 'magic' } }, 'docx'), /PDF 转换模式/);
+  assert.throws(() => parseOptions({ pdf: { sheetMode: 'perColumn' } }, 'xlsx'), /Excel 工作表模式/);
   assert.throws(() => parseOptions({ audio: { bitrateKbps: 1024 } }, 'mp3'), /音频码率/);
   assert.throws(() => parseOptions({ audio: { channels: '5.1' } }, 'mp3'), /声道/);
 });

@@ -94,7 +94,7 @@ systemctl list-timers convertlab-backup.timer        # 备份定时器下次执�
 login: ok as admin@192163.xyz (admin)
 health: {'status': 'ok', 'database': True, 'redis': True, ...}
 table-bordered.pdf    -> docx: success  (word/document.xml: tables=1, borderBlocks=1)
-table-bordered.pdf    -> xlsx: success  (2 个工作表，styles.xml 中 4 条 thin 边框，首行冻结)
+table-bordered.pdf    -> xlsx: success  (1 个工作表，表格区块带 thin 边框，正文自动换行)
 table-borderless.pdf  -> docx: success  (tables=1, borderBlocks=1)
 SMOKE OK
 ```
@@ -155,7 +155,7 @@ docker compose up -d --no-build web worker
 - `deploy/verify/smoke.py`：`SMOKE OK`（带边框 PDF → DOCX 1 张表 1 组边框；→ XLSX 表头冻结、styles.xml 4 条 thin 边框；无边框 PDF → DOCX 1 张表）
 - `deploy/verify/libreoffice_probe.py`：DOCX → PDF 成功，6.5 秒，65 KB
 - 真实 5 页带表格 PDF（`WorkBuddy能力自述.pdf`）：DOCX 4 张表（10×5、6×2、4×3、4×3，
-  与原版 Word 完全一致），正文 1945 字；XLSX 4 个表工作表，行列一致
+  与原版 Word 完全一致），正文 1945 字；XLSX 默认把正文与 4 张表放进 1 个工作表
 - OCR 链路（渲染成纯图片 PDF 后开 OCR）：识别成功，12 秒出 docx，文字层 698 字
 - 外部访问：`http://111.91.29.56` 与 `https://dp.192163.xyz` 均 200，证书有效期至 2027-02-16
 - 常驻内存反而更低：worker 28 MB、web 45 MB（升级前 53 / 77 MB）
@@ -203,16 +203,25 @@ docker compose up -d --no-build web worker
 
 | 页面 | DOCX | XLSX |
 | --- | --- | --- |
-| 第 3 页（1 张表） | `tables=2 rows=20 cells=38`，文本 698 字符 | 2 个带边框表格工作表 + 正文 |
-| 第 4 页（3 张表） | `tables=3 rows=24 cells=37`，文本 470 字符 | 3 个带边框表格工作表 + 正文 |
+| 第 3 页（1 张表） | `tables=2 rows=20 cells=38`，文本 698 字符 | 1 个工作表，含 2 个带边框表格区块与正文 |
+| 第 4 页（3 张表） | `tables=3 rows=24 cells=37`，文本 470 字符 | 1 个工作表，含 3 个带边框表格区块与正文 |
 
 整份 5 页样例都栅格化成纯图片 PDF（`pdftotext` 取到 0 字符）后，开 OCR 转换 DOCX 得到
-`tables=5 rows=26 cells=98`、正文 1919 字符，XLSX 得到 9 个工作表（第 3–5 页的表格各自成表），
+`tables=5 rows=26 cells=98`、正文 1919 字符，XLSX 默认得到 1 个工作表（正文与 5 张表按阅读顺序排列），
 任务备注写“其中 5 个来自扫描页图像识别”。堆叠表格拆分修复前同输入只能识别出 3 张表。
 
 改造前同一份扫描页输出 0 张表。任务备注会写“其中 N 个来自扫描页图像识别”。
 同一份 5 页数字版 PDF 回归转换仍是 4 张带边框表格、正文 1945 字符（原始 `pdftotext`
 非空白字符 1969），未出现退化。
+
+### Excel 默认单工作表（2026-11-24）
+
+PDF 转 Excel 的默认行为已从“每张表一个工作表”改成“整份文档一个工作表”。正文和表格按 PDF
+阅读顺序堆叠，正文跨表格列合并并开启自动换行；只有识别出的表格区块添加边框、表头底纹、数字格式
+和首行冻结。列宽只参考表格单元格内容，避免长段落把表格列撑得过宽。用户显式传
+`options.pdf.sheetMode = "page"` 时，才按 PDF 页码拆成多个工作表。
+
+扫描版多表 PDF 的回归结果同步变为 1 个工作表，原有 OCR 识别与图像表格检测结果不变。
 
 ### 已知限制
 

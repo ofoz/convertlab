@@ -262,13 +262,34 @@ export function buildDocxFromBlocks(blocks: DocBlock[], options: { title?: strin
   return buildZip(entries);
 }
 
+export type SheetTableRange = {
+  /** First and last row that belong to this table (zero-based, inclusive). */
+  startRow: number;
+  endRow: number;
+  /** Style the first row as a table header and freeze it in single-table sheets. */
+  headerRow?: boolean;
+};
+
+export type SheetMerge = {
+  startRow: number;
+  endRow: number;
+  startColumn: number;
+  endColumn: number;
+};
+
 export type SheetSpec = {
   name: string;
   rows: string[][];
-  /** Adds a visible cell border to every written cell. */
+  /** Adds a visible cell border to every written cell (single-table sheets). */
   table?: boolean;
   /** Applies the header style (bold on a light fill) to the first row. */
   headerRow?: boolean;
+  /** Table blocks inside a mixed sheet; rows outside these ranges stay plain text. */
+  tables?: SheetTableRange[];
+  /** Merged cells, for example a paragraph spanning the table width. */
+  merges?: SheetMerge[];
+  /** Optional custom row heights in points; zero keeps the default. */
+  rowHeights?: number[];
   /** Column widths in Excel character units. */
   columnWidths?: number[];
   /** Relative column widths taken from the source layout (for example PDF table geometry). */
@@ -285,7 +306,7 @@ function columnName(index: number): string {
   return name;
 }
 
-const XLSX_STYLES = `${XML_DECL}<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Aptos"/></font><font><b/><sz val="11"/><name val="Aptos"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF1F5F9"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border/><border><left style="thin"><color rgb="FF8A94A6"/></left><right style="thin"><color rgb="FF8A94A6"/></right><top style="thin"><color rgb="FF8A94A6"/></top><bottom style="thin"><color rgb="FF8A94A6"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="5"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf><xf numFmtId="2" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+const XLSX_STYLES = `${XML_DECL}<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Aptos"/></font><font><b/><sz val="11"/><name val="Aptos"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF1F5F9"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border/><border><left style="thin"><color rgb="FF8A94A6"/></left><right style="thin"><color rgb="FF8A94A6"/></right><top style="thin"><color rgb="FF8A94A6"/></top><bottom style="thin"><color rgb="FF8A94A6"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="6"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf><xf numFmtId="2" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
 
 /** Approximates Excel's character-width unit, counting CJK glyphs as double width. */
 export function displayWidth(value: string): number {
@@ -391,21 +412,33 @@ export function buildXlsx(sheets: SheetSpec[]): Buffer {
   entries.push({ name: 'xl/styles.xml', data: XLSX_STYLES });
 
   safeSheets.forEach((sheet, index) => {
-    const table = sheet.table === true;
+    const wholeTable = sheet.table === true;
     const centered = centeredColumns(sheet);
     const money = moneyColumns(sheet);
+    const ranges = sheet.tables ?? [];
     const rowsXml = sheet.rows.slice(0, 5000).map((row, rowIndex) => {
+      const range = ranges.find((entry) => rowIndex >= entry.startRow && rowIndex <= entry.endRow);
+      const tableCell = wholeTable || range !== undefined;
+      const headerCell = wholeTable
+        ? rowIndex === 0 && sheet.headerRow !== false
+        : range?.headerRow === true && rowIndex === range.startRow;
       const cells = row.slice(0, 100).map((value, colIndex) => {
         if (value === '') return '';
         const ref = `${columnName(colIndex)}${rowIndex + 1}`;
-        const headerCell = rowIndex === 0 && sheet.headerRow !== false;
-        const style = table ? (headerCell ? 2 : centered.has(colIndex) ? 3 : money.has(colIndex) ? 4 : 1) : 0;
-        const styleAttr = style > 0 ? ` s="${style}"` : '';
         const text = String(value);
-        if (table && numericCell(text)) return `<c r="${ref}"${styleAttr}><v>${text.trim()}</v></c>`;
+        const numeric = tableCell && numericCell(text);
+        const shortNumber = tableCell && numeric && displayWidth(text) <= 4;
+        const amount = numeric && /^-?(?:0|[1-9][0-9]{0,14})\.[0-9]{2}$/.test(text.trim());
+        const style = tableCell
+          ? headerCell ? 2 : money.has(colIndex) || amount ? 4 : centered.has(colIndex) || shortNumber ? 3 : 1
+          : 5;
+        const styleAttr = style > 0 ? ` s="${style}"` : '';
+        if (numeric) return `<c r="${ref}"${styleAttr}><v>${text.trim()}</v></c>`;
         return `<c r="${ref}"${styleAttr} t="inlineStr"><is><t xml:space="preserve">${escapeXml(text)}</t></is></c>`;
       }).join('');
-      return `<row r="${rowIndex + 1}">${cells}</row>`;
+      const customHeight = sheet.rowHeights?.[rowIndex] ?? 0;
+      const heightAttr = customHeight > 0 ? ` ht="${customHeight}" customHeight="1"` : '';
+      return `<row r="${rowIndex + 1}"${heightAttr}>${cells}</row>`;
     }).join('');
 
     const maxColumns = sheet.rows.reduce((max, row) => Math.max(max, row.length), 1);
@@ -413,13 +446,20 @@ export function buildXlsx(sheets: SheetSpec[]): Buffer {
     const colsXml = widths.length
       ? `<cols>${widths.map((width, column) => `<col min="${column + 1}" max="${column + 1}" width="${width}" customWidth="1"/>`).join('')}</cols>`
       : '';
-    const views = table && sheet.headerRow !== false
+    const views = wholeTable && sheet.headerRow !== false
       ? '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>'
       : '<sheetViews><sheetView workbookViewId="0"/></sheetViews>';
+    const validMerges = (sheet.merges ?? []).filter((merge) =>
+      merge.startRow >= 0 && merge.endRow < sheet.rows.length &&
+      merge.startColumn >= 0 && merge.endColumn > merge.startColumn && merge.startColumn < 100,
+    );
+    const mergeCells = validMerges.length
+      ? `<mergeCells count="${validMerges.length}">${validMerges.map((merge) => `<mergeCell ref="${columnName(merge.startColumn)}${merge.startRow + 1}:${columnName(Math.min(99, merge.endColumn))}${merge.endRow + 1}"/>`).join('')}</mergeCells>`
+      : '';
 
     entries.push({
       name: `xl/worksheets/sheet${index + 1}.xml`,
-      data: `${XML_DECL}<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>${views}<sheetFormatPr defaultRowHeight="16"/>${colsXml}<sheetData>${rowsXml}</sheetData><printOptions horizontalCentered="0" verticalCentered="0"/><pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="portrait" fitToWidth="1" fitToHeight="0"/></worksheet>`,
+      data: `${XML_DECL}<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>${views}<sheetFormatPr defaultRowHeight="16"/>${colsXml}<sheetData>${rowsXml}</sheetData>${mergeCells}<printOptions horizontalCentered="0" verticalCentered="0"/><pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="portrait" fitToWidth="1" fitToHeight="0"/></worksheet>`,
     });
   });
 

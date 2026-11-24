@@ -59,6 +59,7 @@ export default function WorkspacePage() {
   const [pdfMode, setPdfMode] = useState<'editable' | 'layout'>('editable');
   const [pdfDpi, setPdfDpi] = useState(150);
   const [pdfOcr, setPdfOcr] = useState(false);
+  const [pdfSheetMode, setPdfSheetMode] = useState<'single' | 'page'>('single');
   const [docPdfLayout, setDocPdfLayout] = useState<'editable' | 'layout'>('editable');
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -239,7 +240,7 @@ export default function WorkspacePage() {
         channels,
       };
     }
-    if (hasPdf) options.pdf = { mode: pdfMode, dpi: pdfDpi, ocr: pdfOcr };
+    if (hasPdf) options.pdf = { mode: pdfMode, dpi: pdfDpi, ocr: pdfOcr, sheetMode: pdfSheetMode };
     if (hasDocument && selected === 'pdf') options.document = { pdfLayout: docPdfLayout };
     return options;
   }
@@ -301,7 +302,7 @@ export default function WorkspacePage() {
   }, [
     user, selected, picked, uploading, job, limits, usage, quotas,
     hasImage, hasAudio, hasPdf, hasDocument, quality, maxDimension, background, preserveAlpha,
-    bitrate, sampleRate, channels, pdfMode, pdfDpi, pdfOcr, docPdfLayout, applyJob, watchJob, refreshUsage,
+    bitrate, sampleRate, channels, pdfMode, pdfDpi, pdfOcr, pdfSheetMode, docPdfLayout, applyJob, watchJob, refreshUsage,
   ]);
 
   // 文件收好后等一下再自动开工，跟 ConvertX 的 1.1 秒“放桌上”停顿一致。
@@ -737,6 +738,22 @@ export default function WorkspacePage() {
                                 }
                               />
                             </label>
+                            {selected === 'xlsx' ? (
+                              <label className="sx-labeled-field">
+                                <span>Excel 工作表</span>
+                                <select
+                                  className="form-field"
+                                  value={pdfSheetMode}
+                                  onChange={(event) => setPdfSheetMode(event.target.value as 'single' | 'page')}
+                                >
+                                  <option value="single">全部内容放在一个工作表</option>
+                                  <option value="page">每页一个工作表</option>
+                                </select>
+                                <small className="cx-options-hint">
+                                  默认按 PDF 阅读顺序把正文和表格放进同一个工作表；表格仍保留边框、表头和数值格式。
+                                </small>
+                              </label>
+                            ) : null}
                             <label className="checkbox">
                               <input
                                 type="checkbox"

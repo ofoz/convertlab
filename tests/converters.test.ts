@@ -73,11 +73,45 @@ test('XLSX 表格单元格带细边框、表头样式与数值类型', () => {
   assert.match(sheet, /t="inlineStr"/);
   assert.match(styles, /<borders count="2">/);
   assert.match(styles, /numFmtId="2"/);
+  assert.match(styles, /<cellXfs count="6">/);
+  assert.match(styles, /<alignment vertical="top" wrapText="1"\/>/);
 
   const cols = [...sheet.matchAll(/<col min="(\d+)" max="\d+" width="(\d+)"/g)].map((match) => Number(match[2]));
   assert.equal(cols.length, 4);
   assert.ok(cols[1]! > cols[0]!, '列宽应按源表格比例分配（物料名称比序号宽）');
   assert.ok(cols[3]! > cols[2]!, '单价列应宽于数量列');
+});
+
+test('XLSX 混合工作表只为表格区块加边框，正文跨列合并', () => {
+  const xlsx = buildXlsx([{
+    name: '报告',
+    rows: [['概述'], [], ROWS[0]!, ROWS[1]!, [], ['结论']],
+    tables: [{ startRow: 2, endRow: 3, headerRow: true }],
+    merges: [
+      { startRow: 0, endRow: 0, startColumn: 0, endColumn: 3 },
+      { startRow: 5, endRow: 5, startColumn: 0, endColumn: 3 },
+    ],
+  }]);
+  const sheet = textPart(xlsx, 'xl/worksheets/sheet1.xml');
+  assert.match(sheet, /<mergeCell ref="A1:D1"\/>/);
+  assert.match(sheet, /<mergeCell ref="A6:D6"\/>/);
+  assert.equal(countOf(sheet, ' s="2"'), 4, '只有表格首行使用表头样式');
+  assert.equal(countOf(sheet, ' s="0"'), 0, '正文单元格不应带边框样式');
+  assert.match(sheet, /<c r="A3" s="2" t="inlineStr"><is><t xml:space="preserve">序号<\/t><\/is><\/c>/);
+  assert.match(sheet, /<c r="C4" s="3"><v>40<\/v><\/c>/);
+  assert.match(sheet, /<c r="A1" s="5" t="inlineStr"><is><t xml:space="preserve">概述<\/t><\/is><\/c>/);
+  assert.doesNotMatch(sheet, /<pane /, '混合工作表不能冻结第一行的正文');
+  assert.match(sheet, /<c r="A1" s="5" t="inlineStr">/, '正文应开启自动换行');
+});
+
+test('XLSX 会过滤单格冗余合并', () => {
+  const xlsx = buildXlsx([{
+    name: '正文',
+    rows: [['单列正文']],
+    merges: [{ startRow: 0, endRow: 0, startColumn: 0, endColumn: 0 }],
+  }]);
+  const sheet = textPart(xlsx, 'xl/worksheets/sheet1.xml');
+  assert.doesNotMatch(sheet, /<mergeCells/);
 });
 
 test('XLSX 纯文本工作表默认不加边框', () => {

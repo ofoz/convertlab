@@ -97,8 +97,9 @@ docker compose logs -f web
 
 ### PDF → Excel
 
-- 每个表成为独立工作表，名前带页码与表号（如 `第3页 表1`）；正文单独放“正文”工作表。
-- 单元格带细边框，表头加粗加底纹，冻结首行；列宽按 PDF 列比例分配，方便直接筛选汇总。
+- **默认把整份 PDF 的正文和表格按阅读顺序放进一个工作表**，不会把每张表拆成单独 sheet，也不会把正文另放一个 sheet。
+- 工作表内的正文跨表格列合并并自动换行；只有表格区块带细边框、表头底纹和数值格式。列宽由表格单元格决定，长正文不会把表格列撑得过宽。
+- 需要按 PDF 页码归档时，可在转换参数中选择“每页一个工作表”（`sheetMode: "page"`）；页内仍按正文与表格的阅读顺序排列。
 - 数字写成数值单元格（金额用 `0.00` 格式），不会全变文本。
 
 ### 扫描件：OCR + 图像表格检测
@@ -116,18 +117,18 @@ docker compose logs -f web
 | 用例 | 结果 |
 | --- | --- |
 | 数字版 5 页 PDF（4 张表）→ DOCX | 4 张带边框 `w:tbl`（10/6/4/4 行），正文 1945 字（原始 `pdftotext` 1969），无退化 |
-| 数字版 5 页 PDF（4 张表）→ XLSX | 9 个工作表：表格各自成表、正文单独成表 |
+| 数字版 5 页 PDF（4 张表）→ XLSX | 默认 1 个工作表：4 张带边框表格与正文按阅读顺序排列 |
 | 5 页整份栅格化成纯图片 PDF（`pdftotext` 取 0 字符）→ DOCX | `tables=5 rows=26 cells=98`，正文 1919 字，备注写“其中 5 个来自扫描页图像识别” |
-| 同上 → XLSX | 9 个工作表，第 3–5 页的表格各自成表 |
+| 同上 → XLSX | 默认 1 个工作表：扫描页识别出的表格仍保留边框、表头与数值格式 |
 | 单页扫描件（1 张表） | `tables=2 rows=20 cells=38`，698 字 |
-| 单页扫描件（3 张表） | `tables=3 rows=24 cells=37`，XLSX 3 个带边框表格工作表 |
+| 单页扫描件（3 张表） | `tables=3 rows=24 cells=37`，XLSX 的同一工作表内有 3 个带边框表格区块 |
 
 ### 明确的做不到
 
 | 场景 | 结果 |
 | --- | --- |
 | 合并单元格（`gridSpan` / `vMerge`） | 不还原合并，按网格拆成普通单元格 |
-| 跨页长表格 | 每页拆成一个表 / 一个工作表 |
+| 跨页长表格 | 默认保留在同一工作表；续接行和合并单元格可能需要人工检查，按页拆分时会落在不同工作表 |
 | 表格内公式 | 只保留计算结果文字，不重建公式 |
 | 三线表、浅色/断续线、倾斜页面 | 表格结构可能识别不全（依赖可见表格线） |
 | 带底色的引文块、色块、水印 | 有概率被误判为表格 |
@@ -170,7 +171,7 @@ docker compose logs -f web
 | `DELETE` | `/api/jobs/:id` | 取消未完成任务 |
 | `GET/POST/PATCH/DELETE` | `/api/admin/*` | 统计、用户、任务、审计、设置、清理 |
 
-`options` 形如 `{"pdf":{"mode":"editable","dpi":150,"ocr":true}}`，`mode` 取 `editable`（可编辑）或 `layout`（版式还原）。
+`options` 形如 `{"pdf":{"mode":"editable","dpi":150,"ocr":true,"sheetMode":"single"}}`。`mode` 取 `editable`（可编辑）或 `layout`（版式还原）；PDF 转 Excel 时，`sheetMode` 可取 `single`（默认，全部内容放在一个工作表）或 `page`（每页一个工作表）。
 
 ## 配置
 
@@ -204,7 +205,7 @@ npx vite --config web/vite.config.ts   # 前端开发服务器（带 /api 代理
 ```bash
 npm run check                          # 后端类型检查
 npx tsc -p web/tsconfig.json --noEmit  # 前端类型检查
-npm test                               # 单元 / 转换器 / PDF 表格 / 图像表格（当前 33 项：28 通过、0 失败、5 跳过）
+npm test                               # 单元 / 转换器 / PDF 表格 / 图像表格（当前 39 项：34 通过、0 失败、5 跳过）
 CONVERTLAB_E2E=1 npm test              # 追加真实 LibreOffice / Poppler 的端到端用例
 npm run build && npm start             # 生产构建与启动
 npm run doctor                         # 检查 LibreOffice、FFmpeg、Poppler、数据库、Redis

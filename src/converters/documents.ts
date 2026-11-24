@@ -4,8 +4,8 @@ import sharp from 'sharp';
 import { runCommand } from './process.ts';
 import { requireOutput, pageImages } from './image.ts';
 import { ConversionError, type ConvertOutcome, type ConverterInput } from './types.ts';
-import { buildDocxFromBlocks, buildDocxFromImages, buildPptxFromImages, buildPptxFromText, buildXlsx, type DocBlock, type SheetSpec } from './ooxml.ts';
-import { analyzePdfLayout, type PdfLayout } from './pdf-tables.ts';
+import { buildDocxFromBlocks, buildDocxFromImages, buildPptxFromImages, buildPptxFromText, buildXlsx, displayWidth, type DocBlock, type SheetMerge, type SheetSpec, type SheetTableRange } from './ooxml.ts';
+import { analyzePdfLayout, type PdfBlock, type PdfLayout } from './pdf-tables.ts';
 import { ocrPdf } from './ocr.ts';
 import { officeGroup } from './formats.ts';
 import { buildZip } from './zip.ts';
@@ -105,56 +105,148 @@ function sheetName(value: string, fallback: string): string {
   return cleaned || fallback;
 }
 
-export function layoutToSheets(layout: PdfLayout, fallbackText: string): { sheets: SheetSpec[]; notes: string[] } {
-  const sheets: SheetSpec[] = [];
-  const notes: string[] = [];
-  layout.pages.forEach((page) => {
-    // Cross-page continuations are already merged into the previous page's
-    // table; re-emitting them here would duplicate rows in Excel.
-    const activeTables = page.tables.filter((table) => !table.merged);
-    activeTables.forEach((table, tableIndex) => {
-      if (table.rows.length === 0) return;
-      sheets.push({
-        name: sheetName(`第${page.index}页 表${tableIndex + 1}`, `P${page.index}-T${tableIndex + 1}`),
-        rows: table.rows,
-        table: true,
-        headerRow: true,
-        columnWeights: table.columnWeights,
-      });
-    });
-    const paragraphs = page.blocks
-      .filter((block) => block.type !== 'table')
-      .map((block) => (block.type === 'heading' ? block.text : block.text))
-      .filter((text) => text.trim().length > 0)
-      .map((text) => [text]);
-    if (paragraphs.length > 0) {
-      sheets.push({
-        name: sheetName(`第${page.index}页 正文`, `P${page.index}-Text`),
-        rows: paragraphs,
-        table: false,
-      });
-    }
-  });
+export type ExcelSheetMode = 'single' | 'page';
 
-  if (layout.tableCount === 0) {
-    const pages = splitPdfText(fallbackText);
-    return {
-      sheets: pages.map((page, pageIndex) => ({
-        name: sheetName(`第${pageIndex + 1}页`, `Page ${pageIndex + 1}`),
-        rows: page.length ? page.map((line) => [line]) : [[]],
-        table: false,
-      })),
-      notes: ['未检测到稳定的表格结构，已按文本行写入工作表；复杂合并单元格和跨页表格需人工检查'],
-    };
+export function workbookSheetName(layout: PdfLayout): string {
+  const name = layout.pages[0]?.blocks.find((block) => block.type === 'heading' && block.text.trim());
+  return sheetName(name?.type === 'heading' ? name.text : 'PDF 转换', 'PDF 转换');
+}
+
+/**
+ * Places every paragraph and table from one PDF page on a shared grid.
+ * Paragraphs span the full table width as merged cells; tables keep their
+ * borders, header styling and numeric cells.
+ */
+export function blocksToSheet(blocks: PdfBlock[], name: string): SheetSpec {
+  const rows: string[][] = [];
+  const tables: SheetTableRange[] = [];
+  const tableRows: string[][] = [];
+  const paragraphRows: number[] = [];
+  const rowHeights = new Map<number, number>();
+  let maxColumns = 1;
+
+  for (const block of blocks) {
+    if (block.type === 'table') {
+      if (block.rows.length === 0) continue;
+      maxColumns = Math.max(maxColumns, ...block.rows.map((row) => row.length));
+      if (rows.length > 0 && rows[rows.length - 1]!.some((value) => value.trim().length > 0)) rows.push([]);
+      const startRow = rows.length;
+      rows.push(...block.rows);
+      tableRows.push(...block.rows);
+      tables.push({ startRow, endRow: rows.length - 1, headerRow: true });
+      rows.push([]);
+      continue;
+    }
+    const text = block.text.trim();
+    if (!text) {
+      if (rows.length > 0 && rows[rows.length - 1]!.some((value) => value.trim() !== '')) rows.push([]);
+      continue;
+    }
+    paragraphRows.push(rows.length);
+    rowHeights.set(rows.length, 15);
+    rows.push([text]);
   }
 
+  while (rows.length > 0 && rows[rows.length - 1]!.every((value) => value.trim() === '')) rows.pop();
+  const merges: SheetMerge[] = paragraphRows
+    .filter((row) => row < rows.length && maxColumns > 1)
+    .map((row) => ({ startRow: row, endRow: row, startColumn: 0, endColumn: maxColumns - 1 }));
+  // A long paragraph can span all columns and would otherwise make the first
+  // table column enormous. Size columns from table cells when a table exists.
+  const widthRows = tableRows.length > 0 ? tableRows : rows;
+  const widths = Array.from({ length: maxColumns }, (_, column) => {
+    const longest = widthRows.reduce((max, row) => Math.max(max, displayWidth(String(row[column] ?? ''))), 0);
+    const minimum = tableRows.length > 0 ? 10 : 12;
+    const maximum = tableRows.length > 0 ? 48 : 56;
+    return Math.min(maximum, Math.max(minimum, Math.round(longest * 1.2 + 3)));
+  });
+  const sheetWidth = widths.reduce((sum, width) => sum + width, 0);
+  for (const row of paragraphRows) {
+    const text = rows[row]?.[0] ?? '';
+    const lines = Math.max(1, Math.ceil(text.length / Math.max(20, sheetWidth * 0.7)));
+    rowHeights.set(row, Math.min(240, Math.max(18, lines * 18)));
+  }
+  return {
+    name,
+    rows,
+    table: false,
+    tables,
+    merges,
+    columnWidths: widths,
+    rowHeights: rows.map((_, row) => rowHeights.get(row) ?? 0),
+  };
+}
+
+/** Includes tables even for hand-built layouts whose `blocks` omit them. */
+function blocksForPage(page: PdfLayout['pages'][number]): PdfBlock[] {
+  const blocks = [...page.blocks];
+  if (!blocks.some((block) => block.type === 'table')) {
+    for (const table of page.tables.filter((entry) => !entry.merged && entry.rows.length > 0)) {
+      blocks.push({ type: 'table', rows: table.rows, columnWeights: table.columnWeights });
+    }
+  }
+  return blocks;
+}
+
+export function layoutToOneSheet(layout: PdfLayout, fallbackText: string): { sheet: SheetSpec; notes: string[] } {
+  const blocks: PdfBlock[] = [];
+  layout.pages.forEach((page, pageIndex) => {
+    if (pageIndex > 0 && blocks.length > 0) blocks.push({ type: 'paragraph', text: '' });
+    blocks.push(...blocksForPage(page));
+  });
+  let sheet = blocksToSheet(blocks, workbookSheetName(layout));
+  if (sheet.rows.length === 0 && layout.tableCount === 0) {
+    const rows = splitPdfText(fallbackText).flatMap((page, pageIndex) => [
+      ...(pageIndex > 0 ? [[]] : []),
+      ...page.map((line) => [line]),
+    ]);
+    sheet = { name: workbookSheetName(layout), rows, table: false };
+  }
+  const scanned = layout.imageTables ?? 0;
+  const notes = [
+    layout.tableCount > 0
+      ? `已识别 ${layout.tableCount} 个表格，正文与表格按阅读顺序写入一个工作表${scanned > 0 ? `，其中 ${scanned} 个来自扫描页图像识别` : ''}`
+      : '未检测到稳定的表格结构，已按阅读顺序写入一个工作表',
+    '合并单元格、跨页表格、公式和扫描版内容可能仍需人工检查',
+  ];
+  return { sheet, notes };
+}
+
+export function layoutToSheets(
+  layout: PdfLayout,
+  fallbackText: string,
+  mode: ExcelSheetMode = 'single',
+): { sheets: SheetSpec[]; notes: string[] } {
+  if (mode === 'single') {
+    const { sheet, notes } = layoutToOneSheet(layout, fallbackText);
+    return { sheets: [sheet], notes };
+  }
+
+  const fallbackPages = splitPdfText(fallbackText);
+  const sheets = layout.pages.map((page, pageIndex) => {
+    const sheet = blocksToSheet(blocksForPage(page), sheetName(`第${page.index}页`, `Page ${page.index}`));
+    if (sheet.rows.length > 0) return sheet;
+    const lines = fallbackPages[pageIndex] ?? [];
+    return {
+      name: sheetName(`第${page.index}页`, `Page ${page.index}`),
+      rows: lines.length ? lines.map((line) => [line]) : [[]],
+      table: false,
+    };
+  });
+  if (layout.pages.length === 0) {
+    sheets.push(...fallbackPages.map((lines, pageIndex) => ({
+      name: sheetName(`第${pageIndex + 1}页`, `Page ${pageIndex + 1}`),
+      rows: lines.length ? lines.map((line) => [line]) : [[]],
+      table: false,
+    })));
+  }
   const scanned = layout.imageTables ?? 0;
   return {
     sheets,
     notes: [
-      scanned > 0
-        ? `已识别 ${layout.tableCount} 个表格并按行列写入带边框的 Excel 单元格，其中 ${scanned} 个来自扫描页图像识别`
-        : `已识别 ${layout.tableCount} 个表格并按行列写入带边框的 Excel 单元格`,
+      layout.tableCount > 0
+        ? `已识别 ${layout.tableCount} 个表格，按 PDF 页码分别写入工作表${scanned > 0 ? `，其中 ${scanned} 个来自扫描页图像识别` : ''}`
+        : '未检测到稳定的表格结构，已按 PDF 页码分别写入工作表',
       '合并单元格、跨页表格、公式和扫描版内容可能仍需人工检查',
     ],
   };
@@ -214,7 +306,7 @@ export async function convertPdf(input: ConverterInput): Promise<ConvertOutcome>
     }
     input.onProgress?.(35);
     const fallbackText = layout.hasText ? await pdfToText(source.inputPath, source) : '';
-    const { sheets, notes } = layoutToSheets(layout, fallbackText);
+    const { sheets, notes } = layoutToSheets(layout, fallbackText, input.options.pdf?.sheetMode ?? 'single');
     const out = join(input.outputDir, `${input.outputBase}.xlsx`);
     await writeFile(out, buildXlsx(sheets.length > 0 ? sheets : [{ name: 'Sheet1', rows: [[]] }]));
     input.onProgress?.(100);

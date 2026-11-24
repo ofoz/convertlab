@@ -79,7 +79,9 @@ export function parseOptions(value: unknown, target: string): ConversionOptions 
     const pdf = asRecord(pdfRaw, 'PDF 参数');
     const mode = pdf.mode ?? 'editable';
     if (mode !== 'editable' && mode !== 'layout') throw Errors.badRequest('PDF 转换模式无效');
-    options.pdf = { mode, dpi: toInt(pdf.dpi, 'PDF 分辨率', 72, 600, 150), ocr: pdf.ocr === true };
+    const sheetMode = pdf.sheetMode ?? 'single';
+    if (sheetMode !== 'single' && sheetMode !== 'page') throw Errors.badRequest('Excel 工作表模式无效');
+    options.pdf = { mode, dpi: toInt(pdf.dpi, 'PDF 分辨率', 72, 600, 150), ocr: pdf.ocr === true, sheetMode };
   }
 
   if (target === 'pdf' && raw.document !== undefined) {

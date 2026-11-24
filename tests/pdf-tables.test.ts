@@ -106,6 +106,72 @@ test('列间空白通道稳定的无边框表格仍会被识别', () => {
   assert.deepEqual(tables[0]!.rows, rows);
 });
 
+test('PDF 转 Excel 默认把全部正文和表格放进一个工作表', () => {
+  const layout: PdfLayout = {
+    pages: [
+      {
+        index: 1, width: 595, height: 842, textLength: 20, lines: [],
+        blocks: [
+          { type: 'heading', text: '第一章' },
+          { type: 'paragraph', text: '这是第一段正文。' },
+          { type: 'table', rows: [['名称', '数量'], ['A', '1']], columnWeights: [1, 1] },
+          { type: 'paragraph', text: '表格后的正文。' },
+        ],
+        tables: [],
+      },
+      {
+        index: 2, width: 595, height: 842, textLength: 10, lines: [],
+        blocks: [
+          { type: 'heading', text: '第二章' },
+          { type: 'table', rows: [['指标', '得分'], ['B', '90']], columnWeights: [1, 1] },
+        ],
+        tables: [],
+      },
+    ],
+    hasText: true, tableCount: 2, textLength: 30,
+  };
+  const { sheets } = layoutToSheets(layout, '');
+  assert.equal(sheets.length, 1, '默认只能生成一个工作表');
+  const sheet = sheets[0]!;
+  assert.equal(sheet.tables?.length, 2, '两张表都应保留为带边框区块');
+  assert.deepEqual(sheet.merges?.map((merge) => `${merge.startRow}:${merge.endColumn}`), ['0:1', '1:1', '6:1', '8:1']);
+  assert.deepEqual(sheet.rows.filter((row) => row.length > 0), [
+    ['第一章'], ['这是第一段正文。'], ['名称', '数量'], ['A', '1'],
+    ['表格后的正文。'], ['第二章'], ['指标', '得分'], ['B', '90'],
+  ]);
+});
+
+test('混合工作表不让长正文撑宽表格列', () => {
+  const layout: PdfLayout = {
+    pages: [{
+      index: 1, width: 595, height: 842, textLength: 100, lines: [],
+      blocks: [
+        { type: 'paragraph', text: '这是一段很长很长的正文'.repeat(20) },
+        { type: 'table', rows: [['名称', '数量'], ['A', '1']], columnWeights: [1, 1] },
+      ],
+      tables: [],
+    }],
+    hasText: true, tableCount: 1, textLength: 100,
+  };
+  const { sheets } = layoutToSheets(layout, '');
+  assert.equal(sheets.length, 1);
+  assert.ok(sheets[0]!.columnWidths?.every((width) => width <= 20), '列宽应只由表格单元格内容决定');
+  assert.deepEqual(sheets[0]!.merges, [{ startRow: 0, endRow: 0, startColumn: 0, endColumn: 1 }]);
+});
+
+test('PDF 转 Excel 可显式按页拆成多个工作表', () => {
+  const layout: PdfLayout = {
+    pages: [
+      { index: 1, width: 595, height: 842, textLength: 2, lines: [], blocks: [{ type: 'paragraph', text: '第一页' }], tables: [] },
+      { index: 2, width: 595, height: 842, textLength: 2, lines: [], blocks: [{ type: 'paragraph', text: '第二页' }], tables: [] },
+    ],
+    hasText: true, tableCount: 0, textLength: 4,
+  };
+  const { sheets } = layoutToSheets(layout, '', 'page');
+  assert.equal(sheets.length, 2);
+  assert.deepEqual(sheets.map((sheet) => sheet.rows), [[['第一页']], [['第二页']]]);
+});
+
 test('跨页续接的表格不会被重复写入 Excel 工作表', () => {
   const table = (rows: string[][], merged: boolean) => ({
     rows,
@@ -142,6 +208,6 @@ test('跨页续接的表格不会被重复写入 Excel 工作表', () => {
 
   const { sheets } = layoutToSheets(layout, '');
   const tableSheets = sheets.filter((sheet) => sheet.table);
-  assert.equal(tableSheets.length, 1, '续接表已合并，不应再生成第二个表工作表');
-  assert.deepEqual(tableSheets[0]!.rows, [['序号', '名称'], ['1', '打印纸'], ['2', '签字笔']]);
+  assert.equal(sheets.length, 1, '默认合并为一个工作表');
+  assert.deepEqual(sheets[0]!.rows.filter((row) => row.length > 0), [['序号', '名称'], ['1', '打印纸'], ['2', '签字笔']]);
 });
