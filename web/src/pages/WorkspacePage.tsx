@@ -59,6 +59,7 @@ export default function WorkspacePage() {
   const [pdfMode, setPdfMode] = useState<'editable' | 'layout'>('editable');
   const [pdfDpi, setPdfDpi] = useState(150);
   const [pdfOcr, setPdfOcr] = useState(false);
+  const [pdfSecondDetector, setPdfSecondDetector] = useState(true);
   const [pdfSheetMode, setPdfSheetMode] = useState<'single' | 'page'>('single');
   const [docPdfLayout, setDocPdfLayout] = useState<'editable' | 'layout'>('editable');
 
@@ -240,7 +241,15 @@ export default function WorkspacePage() {
         channels,
       };
     }
-    if (hasPdf) options.pdf = { mode: pdfMode, dpi: pdfDpi, ocr: pdfOcr, sheetMode: pdfSheetMode };
+    if (hasPdf) {
+      options.pdf = {
+        mode: pdfMode,
+        dpi: pdfDpi,
+        ocr: pdfOcr,
+        sheetMode: pdfSheetMode,
+        secondDetector: pdfSecondDetector,
+      };
+    }
     if (hasDocument && selected === 'pdf') options.document = { pdfLayout: docPdfLayout };
     return options;
   }
@@ -302,7 +311,7 @@ export default function WorkspacePage() {
   }, [
     user, selected, picked, uploading, job, limits, usage, quotas,
     hasImage, hasAudio, hasPdf, hasDocument, quality, maxDimension, background, preserveAlpha,
-    bitrate, sampleRate, channels, pdfMode, pdfDpi, pdfOcr, pdfSheetMode, docPdfLayout, applyJob, watchJob, refreshUsage,
+    bitrate, sampleRate, channels, pdfMode, pdfDpi, pdfOcr, pdfSecondDetector, pdfSheetMode, docPdfLayout, applyJob, watchJob, refreshUsage,
   ]);
 
   // 文件收好后等一下再自动开工，跟 ConvertX 的 1.1 秒“放桌上”停顿一致。
@@ -539,7 +548,7 @@ export default function WorkspacePage() {
           <h1>
             欢迎来到<span>大肥鱼格式工坊</span>
           </h1>
-          <p>先选目标格式，再把文件交给鲸鱼娘。支持 PDF 表格转 Word / Excel，扫描件可开启中英文 OCR；办理完成后，点桌上的文件取件。</p>
+          <p>先选目标格式，再把文件交给鲸鱼娘。支持 PDF 表格转 Word / Excel，保留框线、表头与可合并单元格；扫描件可开启中英文 OCR，并使用 300 dpi 专用表格结构模型重建。办理完成后，点桌上的文件取件。</p>
         </div>
         <button type="button" id="open-business" className="btn-primary" onClick={showPicker}>
           <SymbolIcon name="sparkles" size={18} />
@@ -765,6 +774,21 @@ export default function WorkspacePage() {
                             {pdfOcr ? (
                               <small className="cx-options-hint">
                                 无文本层的扫描 PDF 会先用 Tesseract 做中英文识别，再重建可编辑表格；识别结果需人工校对。
+                              </small>
+                            ) : null}
+                            {(selected === 'docx' || selected === 'xlsx') ? (
+                              <label className="checkbox">
+                                <input
+                                  type="checkbox"
+                                  checked={pdfSecondDetector}
+                                  onChange={(event) => setPdfSecondDetector(event.target.checked)}
+                                />
+                                <span>深度表格结构复核（推荐）</span>
+                              </label>
+                            ) : null}
+                            {(selected === 'docx' || selected === 'xlsx') && pdfSecondDetector ? (
+                              <small className="cx-options-hint">
+                                数字版 PDF 使用第二检测器复核漏检表格；扫描件在开启 OCR 时以 300 dpi 重建网格、合并单元格和中英文内容。复杂版面仍需人工校对。
                               </small>
                             ) : null}
                           </fieldset>

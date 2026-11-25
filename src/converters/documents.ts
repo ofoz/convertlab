@@ -119,6 +119,7 @@ export function workbookSheetName(layout: PdfLayout): string {
  */
 export function blocksToSheet(blocks: PdfBlock[], name: string): SheetSpec {
   const rows: string[][] = [];
+  const merges: SheetMerge[] = [];
   const tables: SheetTableRange[] = [];
   const tableRows: string[][] = [];
   const paragraphRows: number[] = [];
@@ -134,6 +135,13 @@ export function blocksToSheet(blocks: PdfBlock[], name: string): SheetSpec {
       rows.push(...block.rows);
       tableRows.push(...block.rows);
       tables.push({ startRow, endRow: rows.length - 1, headerRow: true });
+      for (const cell of block.cells ?? []) {
+        if ((cell.columnSpan ?? 1) < 2 && (cell.rowSpan ?? 1) < 2) continue;
+        const endRow = startRow + cell.row + Math.max(1, cell.rowSpan ?? 1) - 1;
+        const endColumn = cell.column + Math.max(1, cell.columnSpan ?? 1) - 1;
+        if (endRow < startRow || endColumn >= maxColumns) continue;
+        merges.push({ startRow: startRow + cell.row, endRow, startColumn: cell.column, endColumn });
+      }
       rows.push([]);
       continue;
     }
@@ -148,9 +156,12 @@ export function blocksToSheet(blocks: PdfBlock[], name: string): SheetSpec {
   }
 
   while (rows.length > 0 && rows[rows.length - 1]!.every((value) => value.trim() === '')) rows.pop();
-  const merges: SheetMerge[] = paragraphRows
-    .filter((row) => row < rows.length && maxColumns > 1)
-    .map((row) => ({ startRow: row, endRow: row, startColumn: 0, endColumn: maxColumns - 1 }));
+  const paragraphMerge = maxColumns > 1
+    ? paragraphRows
+      .filter((row) => row < rows.length)
+      .map((row) => ({ startRow: row, endRow: row, startColumn: 0, endColumn: maxColumns - 1 }))
+    : [];
+  merges.push(...paragraphMerge);
   // A long paragraph can span all columns and would otherwise make the first
   // table column enormous. Size columns from table cells when a table exists.
   const widthRows = tableRows.length > 0 ? tableRows : rows;
@@ -182,7 +193,7 @@ function blocksForPage(page: PdfLayout['pages'][number]): PdfBlock[] {
   const blocks = [...page.blocks];
   if (!blocks.some((block) => block.type === 'table')) {
     for (const table of page.tables.filter((entry) => !entry.merged && entry.rows.length > 0)) {
-      blocks.push({ type: 'table', rows: table.rows, columnWeights: table.columnWeights });
+      blocks.push({ type: 'table', rows: table.rows, columnWeights: table.columnWeights, cells: table.cells });
     }
   }
   return blocks;
@@ -207,7 +218,7 @@ export function layoutToOneSheet(layout: PdfLayout, fallbackText: string): { she
     layout.tableCount > 0
       ? `已识别 ${layout.tableCount} 个表格，正文与表格按阅读顺序写入一个工作表${scanned > 0 ? `，其中 ${scanned} 个来自扫描页图像识别` : ''}`
       : '未检测到稳定的表格结构，已按阅读顺序写入一个工作表',
-    '合并单元格、跨页表格、公式和扫描版内容可能仍需人工检查',
+    '合并单元格、跨页表格、公式和扫描版内容已尝试自动重建，仍建议人工核对',
   ];
   return { sheet, notes };
 }
@@ -247,7 +258,7 @@ export function layoutToSheets(
       layout.tableCount > 0
         ? `已识别 ${layout.tableCount} 个表格，按 PDF 页码分别写入工作表${scanned > 0 ? `，其中 ${scanned} 个来自扫描页图像识别` : ''}`
         : '未检测到稳定的表格结构，已按 PDF 页码分别写入工作表',
-      '合并单元格、跨页表格、公式和扫描版内容可能仍需人工检查',
+      '合并单元格、跨页表格、公式和扫描版内容已尝试自动重建，仍建议人工核对',
     ],
   };
 }
@@ -256,7 +267,7 @@ function docBlocks(layout: PdfLayout): DocBlock[] {
   const blocks: DocBlock[] = [];
   layout.pages.forEach((page) => {
     for (const block of page.blocks) {
-      if (block.type === 'table') blocks.push({ type: 'table', rows: block.rows, columnWeights: block.columnWeights });
+      if (block.type === 'table') blocks.push({ type: 'table', rows: block.rows, columnWeights: block.columnWeights, cells: block.cells });
       else if (block.type === 'heading') blocks.push({ type: 'heading', text: block.text });
       else blocks.push({ type: 'paragraph', text: block.text });
     }
@@ -394,8 +405,8 @@ export async function convertPdf(input: ConverterInput): Promise<ConvertOutcome>
     const scanned = layout!.imageTables ?? 0;
     const note = layout!.tableCount > 0
       ? scanned > 0
-        ? `已识别 ${layout!.tableCount} 个表格并重建为带边框的可编辑表格，其中 ${scanned} 个来自扫描页图像识别；合并单元格、跨页表格和公式需人工检查`
-        : `已识别 ${layout!.tableCount} 个表格并重建为带边框的可编辑表格；合并单元格、跨页表格和公式需人工检查`
+        ? `已识别 ${layout!.tableCount} 个表格并重建为带边框的可编辑表格，其中 ${scanned} 个来自扫描页图像识别；合并单元格、跨页表格和公式已尝试自动重建，仍建议人工核对`
+        : `已识别 ${layout!.tableCount} 个表格并重建为带边框的可编辑表格；合并单元格、跨页表格和公式已尝试自动重建，仍建议人工核对`
       : '未检测到稳定的表格结构，已重建可编辑文字；复杂排版需人工检查';
     return { outputPath: out, outputExt: input.target, note: [...ocrNotes, note].join('；') };
   }

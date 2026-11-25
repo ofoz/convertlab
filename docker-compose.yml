@@ -43,6 +43,8 @@ x-app-environment: &app-environment
   PDFTOPPM_PATH: pdftoppm
   PDFTOTEXT_PATH: pdftotext
   PDFINFO_PATH: pdfinfo
+  PYTHON_TABLE_BIN: ${PYTHON_TABLE_BIN:-/opt/convertlab-python/bin/python}
+  PYTHONUNBUFFERED: "1"
   TZ: ${TZ:-UTC}
 
 services:

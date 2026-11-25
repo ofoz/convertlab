@@ -55,7 +55,7 @@ export type OutputTarget = (typeof IMAGE_TARGETS)[number] | (typeof DOCUMENT_TAR
 export type ConversionOptions = {
   image?: { quality: number; maxDimension: number | null; background: string; preserveAlpha: boolean };
   audio?: { bitrateKbps: number; sampleRate: number | null; channels: 'mono' | 'stereo' | 'source' };
-  pdf?: { mode: 'editable' | 'layout'; dpi: number; ocr?: boolean; sheetMode?: 'single' | 'page' };
+  pdf?: { mode: 'editable' | 'layout'; dpi: number; ocr?: boolean; sheetMode?: 'single' | 'page'; secondDetector?: boolean };
   document?: { pdfLayout: 'editable' | 'layout' };
 };
 

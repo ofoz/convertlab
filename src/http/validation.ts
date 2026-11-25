@@ -81,7 +81,13 @@ export function parseOptions(value: unknown, target: string): ConversionOptions 
     if (mode !== 'editable' && mode !== 'layout') throw Errors.badRequest('PDF 转换模式无效');
     const sheetMode = pdf.sheetMode ?? 'single';
     if (sheetMode !== 'single' && sheetMode !== 'page') throw Errors.badRequest('Excel 工作表模式无效');
-    options.pdf = { mode, dpi: toInt(pdf.dpi, 'PDF 分辨率', 72, 600, 150), ocr: pdf.ocr === true, sheetMode };
+    options.pdf = {
+      mode,
+      dpi: toInt(pdf.dpi, 'PDF 分辨率', 72, 600, 150),
+      ocr: pdf.ocr === true,
+      sheetMode,
+      secondDetector: pdf.secondDetector !== false,
+    };
   }
 
   if (target === 'pdf' && raw.document !== undefined) {

@@ -4,6 +4,8 @@ import { join } from 'node:path';
 import { ConversionError, type ConverterInput } from './types.ts';
 import { runCommand } from './process.ts';
 import { detectImageTableLines, type RasterPageRequest, type RasterSegment } from './pdf-image-tables.ts';
+import { detectExternalPdfTables, type ExternalTable } from './pdf-plumber.ts';
+import { detectRapidTables, type RapidTableResult } from './pdf-rapid-table.ts';
 
 /**
  * Layout analysis for text-based PDFs.
@@ -17,18 +19,40 @@ import { detectImageTableLines, type RasterPageRequest, type RasterSegment } fro
 
 type TableBounds = { x0: number; x1: number; y0: number; y1: number };
 
+/**
+ * A cell anchor. Covered cells are not listed; renderers walk the grid and
+ * emit a continuation for the rest of a row-span.
+ */
+export type PdfCell = {
+  text: string;
+  row: number;
+  column: number;
+  rowSpan: number;
+  columnSpan: number;
+  /** Bounding box in PDF points when it came from a raster detector. */
+  bounds?: TableBounds;
+  /** A covered row-span cell that Word/XLSX must render as continuation. */
+  verticalContinuation?: boolean;
+};
+
 export type PdfTable = {
   rows: string[][];
   columnCount: number;
   columnWeights: number[];
   bounds?: TableBounds;
   merged?: boolean;
+  /** Present only when spans were detected; rectangular tables omit it. */
+  cells?: PdfCell[];
+  /** Grid coordinates in PDF points, used to re-OCR scanned cells. */
+  grid?: { xLevels: number[]; yLevels: number[] };
+  /** Whether bitmap inference contributed this table. */
+  raster?: boolean;
 };
 
 export type PdfBlock =
   | { type: 'heading'; text: string }
   | { type: 'paragraph'; text: string }
-  | { type: 'table'; rows: string[][]; columnWeights: number[] };
+  | { type: 'table'; rows: string[][]; columnWeights: number[]; cells?: PdfCell[] };
 
 export type PdfPageLayout = {
   index: number;
@@ -56,6 +80,8 @@ type Row = { words: Word[]; y0: number; y1: number; yc: number };
 type RawPage = { width: number; height: number; words: Word[] };
 type Segment = { x0: number; y0: number; x1: number; y1: number };
 type SvgPage = { segments: Segment[]; imageArea: number };
+
+type CellSpan = PdfCell;
 
 const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
 const CJK_BOUNDARY = /[\u2e80-\u9fff\uf900-\ufaff\uff00-\uffef]/;
@@ -760,6 +786,8 @@ type GridCandidate = {
   rows: string[][];
   weights: number[];
   bounds: TableBounds;
+  cells?: CellSpan[];
+  grid?: { xLevels: number[]; yLevels: number[] };
 };
 
 function extractGrid(
@@ -881,6 +909,169 @@ export function detectGridTables(segments: Segment[], words: Word[]): GridCandid
 /* -------------------------------------------------------------------------- */
 /* Page assembly                                                              */
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* Second detector                                                             */
+/* -------------------------------------------------------------------------- */
+
+function normalizedCellText(value: string): string {
+  return value.replace(/\s+/g, '').replace(/[|│]/g, '').toLowerCase();
+}
+
+function tableText(table: Pick<PdfTable, 'rows'>): string {
+  return table.rows.flat().map(normalizedCellText).filter(Boolean).join('\u0000');
+}
+
+function textOverlap(left: string, right: string): number {
+  if (!left || !right) return 0;
+  const a = new Set(left.split('\u0000'));
+  const b = new Set(right.split('\u0000'));
+  let shared = 0;
+  for (const value of a) if (b.has(value)) shared += 1;
+  return shared / Math.max(1, Math.min(a.size, b.size));
+}
+
+function boundsOverlap(left: TableBounds, right: TableBounds): number {
+  const x = overlap(left.x0, left.x1, right.x0, right.x1);
+  const y = overlap(left.y0, left.y1, right.y0, right.y1);
+  const intersection = x * y;
+  const area = (box: TableBounds): number => Math.max(1, (box.x1 - box.x0) * (box.y1 - box.y0));
+  return intersection / Math.min(area(left), area(right));
+}
+
+function plumberToTable(table: ExternalTable): PdfTable {
+  const rows = table.rows.map((row) => row.map((cell) => (cell ?? '').replace(/\s+/g, ' ').trim()));
+  const columnCount = Math.max(1, ...rows.map((row) => row.length));
+  const cells = table.cells
+    .filter((cell) => Number.isFinite(cell.row) && Number.isFinite(cell.column))
+    .map((cell) => ({
+      text: cell.text ?? '',
+      row: cell.row,
+      column: cell.column,
+      rowSpan: Math.max(1, cell.rowSpan || 1),
+      columnSpan: Math.max(1, cell.columnSpan || 1),
+    }));
+  return {
+    rows,
+    columnCount,
+    columnWeights: table.columnWeights,
+    bounds: table.bounds,
+    ...(cells.some((cell) => cell.rowSpan > 1 || cell.columnSpan > 1) ? { cells } : {}),
+  };
+}
+
+/**
+ * Keeps the native layout as the segmenter and only promotes a pdfplumber
+ * table in the same rectangle when it has a materially more complete text
+ * layer. Every unmatched plumber table is ignored: pdfplumber sometimes sees
+ * a paragraph as a 2-column "table", and a second detector must not invent
+ * structure that the text layout did not support.
+ */
+export function fuseTables(native: PdfTable[], second: ExternalTable[], options: { enabled?: boolean } = {}): PdfTable[] {
+  if (options.enabled === false || second.length === 0 || native.length === 0) return native;
+  const result = native.map((table) => ({ ...table }));
+  for (const candidate of second) {
+    if (!candidate.bounds || !Array.isArray(candidate.rows) || candidate.rows.length < 2) continue;
+    const mapped = plumberToTable(candidate);
+    if (!mapped.bounds) continue;
+    const mappedBounds = mapped.bounds;
+    let bestIndex = -1;
+    let bestScore = 0;
+    result.forEach((table, index) => {
+      if (!table.bounds || table.columnCount !== mapped.columnCount) return;
+      const area = boundsOverlap(table.bounds, mappedBounds);
+      if (area < 0.55) return;
+      const text = textOverlap(tableText(table), tableText(mapped));
+      const score = area * 0.7 + text * 0.3;
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = index;
+      }
+    });
+    if (bestIndex < 0 || bestScore < 0.55) continue;
+    const current = result[bestIndex]!;
+    const currentCells = current.rows.flat().filter(Boolean).length;
+    const mappedCells = mapped.rows.flat().filter(Boolean).length;
+    const currentChars = tableText(current).length;
+    const mappedChars = tableText(mapped).length;
+    const currentRows = current.rows.length;
+    const mappedRows = mapped.rows.length;
+    const normalizesRows = Math.abs(mappedRows - currentRows) > Math.max(2, currentRows * 0.35);
+    const moreComplete = mappedCells >= currentCells + 2 && mappedChars >= currentChars * 1.12;
+    const preservesShape = !normalizesRows && mappedChars >= currentChars * 0.9;
+    if (moreComplete || preservesShape) {
+      result[bestIndex] = {
+        ...mapped,
+        merged: current.merged,
+        bounds: current.bounds,
+      };
+    }
+  }
+  return result;
+}
+
+function rapidCompleteness(table: PDFTableLike): { populated: number; chars: number; merged: boolean } {
+  const populated = table.rows.reduce((sum, row) => sum + row.filter((cell) => normalizedCellText(cell)).length, 0);
+  const chars = table.rows.reduce((sum, row) => sum + row.join('').replace(/\s/g, '').length, 0);
+  const merged = (table.cells ?? []).some((cell) => cell.rowSpan > 1 || cell.columnSpan > 1);
+  return { populated, chars, merged };
+}
+
+type PDFTableLike = Pick<PdfTable, 'rows' | 'cells'>;
+
+/**
+ * Fuses the SLANet result with raster/vector geometry. A same-place model table
+ * may replace a weaker grid, while a new model table is admitted only when it
+ * is a complete 2x2+ structure and does not merely overlap paragraph text.
+ */
+export function fuseRapidTables(native: PdfTable[], rapid: RapidTableResult[]): PdfTable[] {
+  if (rapid.length === 0) return native;
+  const result = native.map((table) => ({ ...table }));
+  const consumed = new Set<RapidTableResult>();
+
+  for (const candidate of rapid) {
+    if (!candidate.bounds || candidate.rows.length < 2 || candidate.columnCount < 2) continue;
+    const candidateScore = rapidCompleteness(candidate);
+    if (candidateScore.populated < 4 || candidateScore.chars < 8) continue;
+    let bestIndex = -1;
+    let bestScore = 0;
+    result.forEach((table, index) => {
+      if (!table.bounds) return;
+      const area = boundsOverlap(table.bounds, candidate.bounds!);
+      const text = textOverlap(tableText(table), tableText(candidate));
+      const score = area * 0.7 + text * 0.3;
+      if ((area >= 0.45 || text >= 0.35) && score > bestScore) {
+        bestScore = score;
+        bestIndex = index;
+      }
+    });
+    if (bestIndex < 0) continue;
+    const current = result[bestIndex]!;
+    const currentScore = rapidCompleteness(current);
+    const moreComplete = candidateScore.populated > currentScore.populated && candidateScore.chars >= currentScore.chars * 0.85;
+    const betterStructure = candidateScore.merged && !currentScore.merged && candidateScore.chars >= currentScore.chars * 0.9;
+    if (!moreComplete && !betterStructure) continue;
+    result[bestIndex] = {
+      ...candidate,
+      merged: current.merged,
+      bounds: candidate.bounds,
+      raster: true,
+    };
+    consumed.add(candidate);
+  }
+
+  for (const candidate of rapid) {
+    if (consumed.has(candidate) || !candidate.bounds) continue;
+    const score = rapidCompleteness(candidate);
+    const density = score.populated / Math.max(1, candidate.rows.length * candidate.columnCount);
+    if (score.populated < 4 || score.chars < 8 || density < 0.25) continue;
+    const overlapsExisting = result.some((table) => table.bounds && boundsOverlap(table.bounds, candidate.bounds!) >= 0.35);
+    if (overlapsExisting) continue;
+    result.push({ ...candidate, raster: true });
+  }
+
+  return result.sort((left, right) => (left.bounds?.y0 ?? 0) - (right.bounds?.y0 ?? 0));
+}
+
 
 function wordInsideBounds(word: Word, bounds: TableBounds): boolean {
   const xc = (word.x0 + word.x1) / 2;
@@ -905,6 +1096,8 @@ function pageLayout(
   pageIndex: number,
   svgPage?: SvgPage,
   rasterSegments?: Segment[],
+  secondTables: ExternalTable[] = [],
+  rapidTables: RapidTableResult[] = [],
 ): PdfPageLayout {
   const allRows = buildRows(raw.words);
   const vectorTables = svgPage ? detectGridTables(svgPage.segments, raw.words) : [];
@@ -921,7 +1114,24 @@ function pageLayout(
       if (!duplicate) imageTables.push(table);
     }
   }
-  const gridTables = [...imageTables, ...vectorTables].sort((a, b) => a.bounds.y0 - b.bounds.y0);
+  const nativeGridTables = [...imageTables, ...vectorTables].sort((a, b) => a.bounds.y0 - b.bounds.y0);
+  const nativeAsTables: PdfTable[] = nativeGridTables.map((table) => ({
+    rows: table.rows,
+    columnCount: table.rows[0]?.length ?? 0,
+    columnWeights: table.weights,
+    bounds: table.bounds,
+    ...(table.cells ? { cells: table.cells } : {}),
+    ...(table.grid ? { grid: table.grid } : {}),
+  }));
+  const fused = fuseRapidTables(fuseTables(nativeAsTables, secondTables), rapidTables);
+  const gridTables = fused.map((table) => ({
+    rows: table.rows,
+    weights: table.columnWeights,
+    bounds: table.bounds!,
+    cells: table.cells,
+    grid: table.grid,
+    raster: table.raster,
+  }));
   const tableWords = new Set<Word>();
   for (const word of raw.words) {
     if (gridTables.some((table) => wordInsideBounds(word, table.bounds))) tableWords.add(word);
@@ -953,7 +1163,7 @@ function pageLayout(
     items.push({
       y: table.bounds.y0,
       order: 0,
-      block: { type: 'table', rows: table.rows, columnWeights: table.weights },
+      block: { type: 'table', rows: table.rows, columnWeights: table.weights, cells: table.cells },
     });
   }
   for (let index = 0; index < rows.length; index += 1) {
@@ -986,6 +1196,9 @@ function pageLayout(
       columnCount: table.rows[0]?.length ?? 0,
       columnWeights: table.weights,
       bounds: table.bounds,
+      ...(table.cells ? { cells: table.cells } : {}),
+      ...(table.grid ? { grid: table.grid } : {}),
+      ...(table.raster ? { raster: true } : {}),
     })),
     ...textTables.map((table) => ({
       rows: table.rows,
@@ -1002,7 +1215,7 @@ function pageLayout(
     tables,
     lines,
     textLength,
-    imageTables: imageTables.length,
+    imageTables: fused.filter((table) => table.raster).length,
   };
 }
 
@@ -1018,12 +1231,18 @@ function sameColumnWidths(left: number[], right: number[]): boolean {
   });
 }
 
-function mergeCrossPageTables(pages: PdfPageLayout[]): void {
+export function mergeCrossPageTables(pages: PdfPageLayout[]): void {
   for (let index = 1; index < pages.length; index += 1) {
     const previous = pages[index - 1]!;
     const current = pages[index]!;
-    const previousTable = [...previous.tables].reverse().find((table) => !table.merged);
-    const currentTable = current.tables.find((table) => !table.merged);
+    const previousBlockIndex = previous.blocks.length - 1;
+    const previousBlock = previous.blocks[previousBlockIndex];
+    const currentBlock = current.blocks[0];
+    // A continuation is safe only when both tables own the page boundary.
+    // Matching column widths alone also occurs in unrelated, recurring forms.
+    if (previousBlock?.type !== 'table' || currentBlock?.type !== 'table') continue;
+    const previousTable = [...previous.tables].reverse().find((table) => !table.merged && table.rows === previousBlock.rows);
+    const currentTable = current.tables.find((table) => !table.merged && table.rows === currentBlock.rows);
     if (!previousTable?.bounds || !currentTable?.bounds) continue;
     // A table that truly continues on the next page ends at the bottom of one
     // page and resumes at the very top of the next, with the same column grid.
@@ -1037,17 +1256,28 @@ function mergeCrossPageTables(pages: PdfPageLayout[]): void {
     );
     if (xShift > 8) continue;
 
-    const repeatedHeader = normalizedRow(previousTable.rows[0]) === normalizedRow(currentTable.rows[0]);
-    previousTable.rows.push(...currentTable.rows.slice(repeatedHeader ? 1 : 0));
+    let currentStart = normalizedRow(previousTable.rows[0]) === normalizedRow(currentTable.rows[0]) ? 1 : 0;
+    const previousRowCount = previousTable.rows.length;
+    // Word processors commonly duplicate the header, and some generators also
+    // repeat the final row at a page boundary. Drop only these boundary rows.
+    while (currentStart < currentTable.rows.length &&
+      normalizedRow(previousTable.rows[previousTable.rows.length - 1]) === normalizedRow(currentTable.rows[currentStart])) {
+      currentStart += 1;
+    }
+    const addedRows = currentTable.rows.slice(currentStart);
+    const addedCells = currentTable.cells
+      ?.filter((cell) => cell.row >= currentStart)
+      .map((cell) => ({ ...cell, row: previousRowCount + cell.row - currentStart }));
+    previousTable.rows.push(...addedRows);
+    if (previousTable.cells && addedCells) {
+      previousTable.cells = [...previousTable.cells, ...addedCells].filter((cell) => cell.row < previousTable.rows.length);
+    }
     currentTable.merged = true;
 
-    const previousBlock = [...previous.blocks].reverse().find((block) => block.type === 'table');
-    if (previousBlock?.type === 'table') {
-      previousBlock.rows = previousTable.rows;
-      previousBlock.columnWeights = previousTable.columnWeights;
-    }
-    const firstTable = current.blocks.findIndex((block) => block.type === 'table');
-    if (firstTable >= 0) current.blocks.splice(firstTable, 1);
+    previousBlock.rows = previousTable.rows;
+    previousBlock.columnWeights = previousTable.columnWeights;
+    previousBlock.cells = previousTable.cells;
+    current.blocks.splice(0, 1);
   }
 }
 
@@ -1066,12 +1296,7 @@ const RASTER_PAGE_LIMIT = 20;
  * a page-sized bitmap without usable vector rules — exactly what a scanned page
  * looks like after OCR. Born-digital pages never pay for the extra render.
  */
-async function rasterSegmentsFor(
-  input: ConverterInput,
-  rawPages: RawPage[],
-  svgPages: SvgPage[],
-  force: boolean,
-): Promise<Map<number, Segment[]>> {
+function rasterPageRequests(rawPages: RawPage[], svgPages: SvgPage[], force: boolean): RasterPageRequest[] {
   const requests: RasterPageRequest[] = [];
   for (let index = 0; index < rawPages.length && requests.length < RASTER_PAGE_LIMIT; index += 1) {
     const raw = rawPages[index]!;
@@ -1086,6 +1311,10 @@ async function rasterSegmentsFor(
     }
     requests.push({ index: index + 1, width: raw.width, height: raw.height });
   }
+  return requests;
+}
+
+async function rasterSegmentsFor(input: ConverterInput, requests: RasterPageRequest[]): Promise<Map<number, Segment[]>> {
   if (requests.length === 0) return new Map<number, Segment[]>();
   try {
     return await detectImageTableLines(input, requests);
@@ -1136,8 +1365,25 @@ export async function analyzePdfLayout(
     return { pages: [], hasText: false, tableCount: 0, textLength: 0, imageTables: 0 };
   }
   const svgPages = svg ? parseSvgPages(svg) : [];
-  const rasterSegments = await rasterSegmentsFor(input, rawPages, svgPages, options.forceRaster === true);
-  const pages = rawPages.map((page, index) => pageLayout(page, index, svgPages[index], rasterSegments.get(index + 1)));
+  const rasterPages = rasterPageRequests(rawPages, svgPages, options.forceRaster === true);
+  // The three bitmap/content-stream readers fail independently. They share
+  // one page candidate list and run concurrently so a missing optional Python
+  // package or OCR failure cannot delay the text-layout fallback.
+  const [rasterSegments, secondTables, rapidTables] = await Promise.all([
+    rasterSegmentsFor(input, rasterPages),
+    input.options.pdf?.secondDetector === false ? Promise.resolve([]) : detectExternalPdfTables(input),
+    detectRapidTables(input, rasterPages),
+  ]);
+  const pages = rawPages.map((page, index) =>
+    pageLayout(
+      page,
+      index,
+      svgPages[index],
+      rasterSegments.get(index + 1),
+      secondTables.filter((table) => table.pageIndex === index + 1),
+      rapidTables.get(index + 1) ?? [],
+    ),
+  );
   mergeCrossPageTables(pages);
   const textLength = pages.reduce((sum, page) => sum + page.textLength, 0);
   const tableCount = pages.reduce((sum, page) => sum + page.tables.filter((table) => !table.merged).length, 0);

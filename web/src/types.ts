@@ -103,7 +103,13 @@ export type AudioOptions = {
   channels: 'mono' | 'stereo' | 'source';
 };
 
-export type PdfOptions = { mode: 'editable' | 'layout'; dpi: number; ocr?: boolean; sheetMode?: 'single' | 'page' };
+export type PdfOptions = {
+  mode: 'editable' | 'layout';
+  dpi: number;
+  ocr?: boolean;
+  sheetMode?: 'single' | 'page';
+  secondDetector?: boolean;
+};
 
 export type ConversionOptions = {
   image?: ImageOptions;

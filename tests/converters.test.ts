@@ -48,6 +48,26 @@ test('DOCX 会转义 XML 特殊字符而不是破坏结构', () => {
   assert.equal(countOf(xml, '<w:tc>'), 4);
 });
 
+test('DOCX 保留跨列与跨行合并锚点，续接单元格留空', () => {
+  const docx = buildDocxFromBlocks([{
+    type: 'table',
+    rows: [
+      ['合并锚点', '', '右一', '右二'],
+      ['', '', '值一', '值二'],
+    ],
+    columnWeights: [30, 30, 30, 30],
+    cells: [
+      { row: 0, column: 0, rowSpan: 2, columnSpan: 2, text: '合并锚点' },
+    ],
+  }]);
+  const xml = textPart(docx, 'word/document.xml');
+  assert.match(xml, /<w:gridSpan w:val="2"\/>/);
+  assert.match(xml, /<w:vMerge w:val="restart"\/>/);
+  assert.match(xml, /<w:vMerge\/>/);
+  assert.equal(countOf(xml, '>合并锚点<'), 1);
+  assert.equal(countOf(xml, '<w:tc>'), 6, '两行四列中，跨两列跨两行的合并只生成 6 个逻辑单元格');
+});
+
 test('DOCX 包内包含样式与关系部件', () => {
   const docx = buildDocxFromBlocks([{ type: 'paragraph', text: 'hello' }]);
   const styles = textPart(docx, 'word/styles.xml');
@@ -112,6 +132,30 @@ test('XLSX 会过滤单格冗余合并', () => {
   }]);
   const sheet = textPart(xlsx, 'xl/worksheets/sheet1.xml');
   assert.doesNotMatch(sheet, /<mergeCells/);
+});
+
+test('XLSX 保留横向、纵向与混合合并，锚点文本保留而续接单元格为空', () => {
+  const xlsx = buildXlsx([{
+    name: '合并',
+    rows: [
+      ['混合', '', '横向', '', '纵向'],
+      ['', '', '右一', '右二', ''],
+      ['底一', '底二', '', '', ''],
+    ],
+    table: true,
+    merges: [
+      { startRow: 0, endRow: 1, startColumn: 0, endColumn: 1 },
+      { startRow: 0, endRow: 0, startColumn: 2, endColumn: 3 },
+      { startRow: 0, endRow: 1, startColumn: 4, endColumn: 4 },
+    ],
+  }]);
+  const sheet = textPart(xlsx, 'xl/worksheets/sheet1.xml');
+  assert.match(sheet, /<mergeCell ref="A1:B2"\/>/);
+  assert.match(sheet, /<mergeCell ref="C1:D1"\/>/);
+  assert.match(sheet, /<mergeCell ref="E1:E2"\/>/);
+  assert.match(sheet, /<c r="A1"[^>]*><is><t[^>]*>混合<\/t><\/is><\/c>/);
+  assert.doesNotMatch(sheet, /<c r="B2"/);
+  assert.doesNotMatch(sheet, /<c r="E2"/);
 });
 
 test('XLSX 纯文本工作表默认不加边框', () => {

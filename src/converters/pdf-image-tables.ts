@@ -18,7 +18,7 @@ import type { ConverterInput } from './types.ts';
  * bordered cells with the same code path as digital ones.
  */
 
-export const RASTER_DPI = 150;
+export const RASTER_DPI = 300;
 /** Guard against pathological page boxes; 40M pixels is a very large A0 sheet. */
 const MAX_PIXELS = 40_000_000;
 /** A rule must be at least this long (relative to the page) to count. */

@@ -1,4 +1,5 @@
 import { buildZip, type ZipEntry } from './zip.ts';
+import type { PdfCell } from './pdf-tables.ts';
 
 export function escapeXml(value: string): string {
   return value
@@ -173,7 +174,7 @@ export function buildDocxFromImages(pages: PageImage[]): Buffer {
 export type DocBlock =
   | { type: 'heading'; text: string }
   | { type: 'paragraph'; text: string }
-  | { type: 'table'; rows: string[][]; columnWeights?: number[] };
+  | { type: 'table'; rows: string[][]; columnWeights?: number[]; cells?: PdfCell[] };
 
 const DOCX_PAGE_W = 11_906;
 const DOCX_PAGE_H = 16_838;
@@ -190,19 +191,74 @@ function docxParagraph(text: string, style?: 'Title' | 'Heading1'): string {
     .join('');
 }
 
-function docxCell(text: string, widthTwips: number, header: boolean): string {
+function docxCell(text: string, widthTwips: number, header: boolean, cell?: PdfCell): string {
   const shading = header ? '<w:shd w:val="clear" w:color="auto" w:fill="F1F5F9"/>' : '';
   const runProps = header ? '<w:rPr><w:b/><w:color w:val="0F172A"/></w:rPr>' : '';
+  const columnSpan = Math.max(1, cell?.columnSpan ?? 1);
+  const continuation = cell?.verticalContinuation === true;
+  const restart = !continuation && Math.max(1, cell?.rowSpan ?? 1) > 1;
+  const spans = (columnSpan > 1 ? `<w:gridSpan w:val="${columnSpan}"/>` : '') +
+    (continuation ? '<w:vMerge/>' : restart ? '<w:vMerge w:val="restart"/>' : '');
   const lines = text.split(/\r?\n/);
   const paragraphs = lines
     .map((line) => `<w:p><w:pPr><w:spacing w:before="40" w:after="40" w:line="240" w:lineRule="auto"/></w:pPr><w:r>${runProps}<w:t xml:space="preserve">${escapeXml(line) || ' '}</w:t></w:r></w:p>`)
     .join('');
-  return `<w:tc><w:tcPr><w:tcW w:w="${widthTwips}" w:type="dxa"/><w:vAlign w:val="center"/>${shading}</w:tcPr>${paragraphs}</w:tc>`;
+  return `<w:tc><w:tcPr><w:tcW w:w="${widthTwips}" w:type="dxa"/>${spans}<w:vAlign w:val="center"/>${shading}</w:tcPr>${paragraphs}</w:tc>`;
 }
 
-function docxTable(rows: string[][], weights?: number[]): string {
+type NormalizedTable = {
+  rows: string[][];
+  columnCount: number;
+  /** Anchor and vertical-continuation cells keyed by `row:column`. */
+  cells: Map<string, PdfCell>;
+};
+
+function normalizeTable(rows: string[][], cells?: PdfCell[]): NormalizedTable {
+  const rowCount = Math.max(1, rows.length);
   const columnCount = Math.max(1, ...rows.map((row) => row.length));
-  const normalized = rows.map((row) => Array.from({ length: columnCount }, (_, index) => row[index] ?? ''));
+  const normalizedRows = Array.from({ length: rowCount }, (_, row) => (
+    Array.from({ length: columnCount }, (_, column) => String(rows[row]?.[column] ?? ''))
+  ));
+  const normalized = new Map<string, PdfCell>();
+  const occupied = Array.from({ length: rowCount }, () => Array.from({ length: columnCount }, () => false));
+  for (const candidate of cells ?? []) {
+    if (!candidate || candidate.row < 0 || candidate.column < 0 || candidate.row >= rowCount || candidate.column >= columnCount) continue;
+    if (occupied[candidate.row]![candidate.column]) continue;
+    const rowSpan = Math.max(1, Math.min(candidate.rowSpan || 1, rowCount - candidate.row));
+    const columnSpan = Math.max(1, Math.min(candidate.columnSpan || 1, columnCount - candidate.column));
+    const cell: PdfCell = {
+      row: candidate.row,
+      column: candidate.column,
+      rowSpan,
+      columnSpan,
+      text: String(candidate.text ?? rows[candidate.row]?.[candidate.column] ?? ''),
+      verticalContinuation: false,
+    };
+    normalized.set(`${cell.row}:${cell.column}`, cell);
+    for (let row = cell.row; row < cell.row + rowSpan; row += 1) {
+      for (let column = cell.column; column < cell.column + columnSpan; column += 1) occupied[row]![column] = true;
+    }
+    for (let row = cell.row + 1; row < cell.row + rowSpan; row += 1) {
+      normalized.set(`${row}:${cell.column}`, {
+        ...cell,
+        row,
+        rowSpan: 1,
+        text: rows[row]?.[cell.column] ?? '',
+        verticalContinuation: true,
+      });
+    }
+  }
+  for (let row = 0; row < rowCount; row += 1) {
+    for (let column = 0; column < columnCount; column += 1) {
+      if (occupied[row]![column]) continue;
+      normalized.set(`${row}:${column}`, { row, column, rowSpan: 1, columnSpan: 1, text: normalizedRows[row]![column]!, verticalContinuation: false });
+    }
+  }
+  return { rows: normalizedRows, columnCount, cells: normalized };
+}
+
+function docxTable(rows: string[][], weights?: number[], cells?: PdfCell[]): string {
+  const { columnCount, cells: normalizedCells } = normalizeTable(rows, cells);
   const rawWeights = Array.from({ length: columnCount }, (_, index) => Math.max(8, Number(weights?.[index]) || 12));
   const weightTotal = rawWeights.reduce((sum, value) => sum + value, 0);
   let widths = rawWeights.map((value) => Math.max(650, Math.round((value / weightTotal) * DOCX_CONTENT_W)));
@@ -217,12 +273,26 @@ function docxTable(rows: string[][], weights?: number[]): string {
   const borders = '<w:tblBorders><w:top w:val="single" w:sz="6" w:space="0" w:color="8A94A6"/><w:left w:val="single" w:sz="6" w:space="0" w:color="8A94A6"/><w:bottom w:val="single" w:sz="6" w:space="0" w:color="8A94A6"/><w:right w:val="single" w:sz="6" w:space="0" w:color="8A94A6"/><w:insideH w:val="single" w:sz="6" w:space="0" w:color="8A94A6"/><w:insideV w:val="single" w:sz="6" w:space="0" w:color="8A94A6"/></w:tblBorders>';
   const tblPr = `<w:tblPr><w:tblW w:w="${DOCX_CONTENT_W}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${borders}<w:tblCellMar><w:top w:w="70" w:type="dxa"/><w:left w:w="90" w:type="dxa"/><w:bottom w:w="70" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tblCellMar><w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="0" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/></w:tblPr>`;
   const grid = `<w:tblGrid>${widths.map((width) => `<w:gridCol w:w="${width}"/>`).join('')}</w:tblGrid>`;
-  const body = normalized
-    .map((row, rowIndex) => {
-      const props = rowIndex === 0 ? '<w:trPr><w:tblHeader/><w:cantSplit/></w:trPr>' : '<w:trPr><w:cantSplit/></w:trPr>';
-      return `<w:tr>${props}${row.map((cell, index) => docxCell(cell, widths[index]!, rowIndex === 0)).join('')}</w:tr>`;
-    })
-    .join('');
+  const body = rows.map((_, rowIndex) => {
+    const props = rowIndex === 0 ? '<w:trPr><w:tblHeader/><w:cantSplit/></w:trPr>' : '<w:trPr><w:cantSplit/></w:trPr>';
+    const rowCells: string[] = [];
+    for (let column = 0; column < columnCount;) {
+      const cell = normalizedCells.get(`${rowIndex}:${column}`) ?? {
+        row: rowIndex,
+        column,
+        rowSpan: 1,
+        columnSpan: 1,
+        text: '',
+        verticalContinuation: false,
+      };
+      const span = Math.max(1, cell.columnSpan || 1);
+      const width = widths.slice(column, column + span).reduce((sum, value) => sum + value, 0);
+      const text = cell.verticalContinuation ? '' : String(cell.text ?? rows[rowIndex]?.[column] ?? '');
+      rowCells.push(docxCell(text, width, rowIndex === 0 && !cell.verticalContinuation, cell));
+      column += span;
+    }
+    return `<w:tr>${props}${rowCells.join('')}</w:tr>`;
+  }).join('');
   return `<w:tbl>${tblPr}${grid}${body}</w:tbl><w:p><w:pPr><w:spacing w:after="0" w:line="120" w:lineRule="auto"/></w:pPr></w:p>`;
 }
 
@@ -231,7 +301,7 @@ export function buildDocxFromBlocks(blocks: DocBlock[], options: { title?: strin
   const entries: ZipEntry[] = [];
   const body = blocks
     .map((block) => {
-      if (block.type === 'table') return docxTable(block.rows, block.columnWeights);
+      if (block.type === 'table') return docxTable(block.rows, block.columnWeights, block.cells);
       if (block.type === 'heading') return docxParagraph(block.text, 'Heading1');
       return docxParagraph(block.text);
     })
@@ -451,7 +521,8 @@ export function buildXlsx(sheets: SheetSpec[]): Buffer {
       : '<sheetViews><sheetView workbookViewId="0"/></sheetViews>';
     const validMerges = (sheet.merges ?? []).filter((merge) =>
       merge.startRow >= 0 && merge.endRow < sheet.rows.length &&
-      merge.startColumn >= 0 && merge.endColumn > merge.startColumn && merge.startColumn < 100,
+      merge.startColumn >= 0 && merge.startColumn < 100 &&
+      (merge.endColumn > merge.startColumn || merge.endRow > merge.startRow),
     );
     const mergeCells = validMerges.length
       ? `<mergeCells count="${validMerges.length}">${validMerges.map((merge) => `<mergeCell ref="${columnName(merge.startColumn)}${merge.startRow + 1}:${columnName(Math.min(99, merge.endColumn))}${merge.endRow + 1}"/>`).join('')}</mergeCells>`

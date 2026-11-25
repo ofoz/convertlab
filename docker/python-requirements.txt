@@ -1,0 +1,11 @@
+# Used by the isolated table-enhancement interpreter.  rapid-table itself is
+# installed with --no-deps in the Dockerfile so the headless OpenCV wheel is used.
+pdfplumber==0.11.11
+opencv-python-headless>=4.5.1.48
+onnxruntime>=1.17.0
+pillow>=13.0.0
+numpy>=1.21.6
+omegaconf
+colorlog
+requests
+tqdm

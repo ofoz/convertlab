@@ -34,8 +34,8 @@
 
 - **PDF 表格 → 真表格**：有文本层的 PDF 识别表格结构，输出真正的 `w:tbl`（带 `w:tblBorders` 细边框、
   表头加粗底纹、跨页重复表头），转 Excel 时按行列写单元格、带边框与冻结首行。
-- **扫描件 OCR**：OCRmyPDF + Tesseract（`chi_sim` + `eng`）写入不可见文本层，页面图像不动，结果仍可编辑。
-- **图片表格还原**：扫描页用 150dpi 灰度位图检测表格线，换算回 PDF 坐标后装配成带边框表格——不是一列列散文字。
+- **扫描件 OCR**：OCRmyPDF + Tesseract（`chi_sim` + `eng`）写入不可见文本层，页面图像不动，结果仍可编辑；可开启 300dpi 深度表格结构重建识别出合并单元格与跨页连续表格。
+- **图片表格还原**：扫描页用 300dpi 灰度位图检测表格线，配合 RapidTable SLANet Plus 深度学习模型识别网格与合并单元格，换算回 PDF 坐标后装配成带边框表格——不是一列列散文字。
 - **多格式互转**：4 个转换引擎、30 种输入格式、26 种输出格式（图片 / PDF / 文档 / 表格 / 演示 / 音视频）。
 - **批量作业**：一次最多 20 个文件、单文件 100 MB，任务队列 + 实时进度 + 结果 ZIP 打包。
 - **账号与配额**：登录、注册开关、每日任务数与流量配额、管理员封禁与用量统计、审计日志。
@@ -72,7 +72,7 @@ docker compose logs -f web
 1. 打开首页（转换台），在工坊大厅里选**目标格式**，比如「Word 文档（.docx）」。
 2. 拖入或选择文件，可一次选多个（同一批必须转成同一个目标格式）。
 3. 选转换参数：PDF 可切换「可编辑 / 版式还原」两种模式；扫描件勾选「扫描件识别（OCR，较慢）」
-   （默认 150dpi，40 页以内）。
+   （默认 300dpi，40 页以内）。
 4. 点「办理转换」——如果还没登录，此时才弹登录/注册框，登录成功后这一单自动继续。
 5. 在任务列表看进度，每行显示源文件、**目标格式**、状态与耗时；完成后点文件领取，多个结果可打包成 ZIP。
 6. 结果默认保留 2 小时，历史记录页可回看并取消未完成的任务；账号页可改密码、看当日配额。
@@ -105,7 +105,7 @@ docker compose logs -f web
 ### 扫描件：OCR + 图像表格检测
 
 - 勾「扫描件识别（OCR）」后，无文本层页面先用 OCRmyPDF + Tesseract 写入不可见文本层，页面图像不动。
-- 表格线在扫描件里是**像素**，所以对判定为扫描页的页面额外以 150dpi 灰度渲染一次，
+- 表格线在扫描件里是**像素**，所以对判定为扫描页的页面额外以 300dpi 灰度渲染一次，
   用像素连续暗行程找横线/竖线（带线带密度校验，排除色块、字形、logo），再换算回 PDF 坐标，
   与文本层坐标一起装配成带边框表格。
 - 触发自动判断：位图面积 ≥ 页面 50% 且矢量表格线不足，或整份文件没有文本层；单次最多 20 页扫描页。
@@ -123,12 +123,12 @@ docker compose logs -f web
 | 单页扫描件（1 张表） | `tables=2 rows=20 cells=38`，698 字 |
 | 单页扫描件（3 张表） | `tables=3 rows=24 cells=37`，XLSX 的同一工作表内有 3 个带边框表格区块 |
 
-### 明确的做不到
+### 合并单元格、跨页与能力边界
 
 | 场景 | 结果 |
 | --- | --- |
-| 合并单元格（`gridSpan` / `vMerge`） | 不还原合并，按网格拆成普通单元格 |
-| 跨页长表格 | 默认保留在同一工作表；续接行和合并单元格可能需要人工检查，按页拆分时会落在不同工作表 |
+| 合并单元格（`gridSpan` / `vMerge`） | 支持横向、纵向与混合合并，DOCX 输出 `w:gridSpan` / `w:vMerge`，XLSX 输出 `<mergeCell>` |
+| 跨页长表格 | 相邻页表头行完全一致时自动合并，保留连续合并单元格；按页拆分时会落在不同工作表 |
 | 表格内公式 | 只保留计算结果文字，不重建公式 |
 | 三线表、浅色/断续线、倾斜页面 | 表格结构可能识别不全（依赖可见表格线） |
 | 带底色的引文块、色块、水印 | 有概率被误判为表格 |
@@ -171,7 +171,7 @@ docker compose logs -f web
 | `DELETE` | `/api/jobs/:id` | 取消未完成任务 |
 | `GET/POST/PATCH/DELETE` | `/api/admin/*` | 统计、用户、任务、审计、设置、清理 |
 
-`options` 形如 `{"pdf":{"mode":"editable","dpi":150,"ocr":true,"sheetMode":"single"}}`。`mode` 取 `editable`（可编辑）或 `layout`（版式还原）；PDF 转 Excel 时，`sheetMode` 可取 `single`（默认，全部内容放在一个工作表）或 `page`（每页一个工作表）。
+`options` 形如 `{"pdf":{"mode":"editable","dpi":300,"ocr":true,"sheetMode":"single","secondDetector":true}}`。`mode` 取 `editable`（可编辑）或 `layout`（版式还原）；`secondDetector: true` 启用 pdfplumber 第二检测器做结果融合（默认开启）；PDF 转 Excel 时，`sheetMode` 可取 `single`（默认，全部内容放在一个工作表）或 `page`（每页一个工作表）。
 
 ## 配置
 
@@ -190,6 +190,7 @@ docker compose logs -f web
 | `MAX_FILE_MB` / `MAX_BATCH_FILES` | `100` / `20` | 单文件上限 / 单批文件数 |
 | `DAILY_JOBS` / `DAILY_UPLOAD_MB` / `DAILY_OUTPUT_MB` | `20` / `1024` / `2048` | 每用户每日配额 |
 | `WORKER_CONCURRENCY` / `JOB_TIMEOUT_SEC` | `3` / `600` | 并发任务数 / 单任务超时 |
+| `PYTHON_TABLE_BIN` | `/opt/convertlab-python/bin/python` | RapidTable 与 pdfplumber 使用的独立 Python 解释器 |
 
 ## 本地开发与测试
 
@@ -205,7 +206,7 @@ npx vite --config web/vite.config.ts   # 前端开发服务器（带 /api 代理
 ```bash
 npm run check                          # 后端类型检查
 npx tsc -p web/tsconfig.json --noEmit  # 前端类型检查
-npm test                               # 单元 / 转换器 / PDF 表格 / 图像表格（当前 39 项：34 通过、0 失败、5 跳过）
+npm test                               # 单元 / 转换器 / PDF 表格 / 图像表格（当前 47 项：42 通过、0 失败、5 跳过）
 CONVERTLAB_E2E=1 npm test              # 追加真实 LibreOffice / Poppler 的端到端用例
 npm run build && npm start             # 生产构建与启动
 npm run doctor                         # 检查 LibreOffice、FFmpeg、Poppler、数据库、Redis
@@ -229,8 +230,10 @@ src/
   db/                   PostgreSQL 访问与建表脚本
   jobs/                 BullMQ 队列、worker 池、清理与恢复
   converters/
-    pdf-tables.ts          PDF 文本层表格识别、网格装配
+    pdf-tables.ts          PDF 文本层表格识别、网格装配、跨页合并与检测器融合
     pdf-image-tables.ts    扫描页位图表格线检测（纯 TS 像素处理）
+    pdf-plumber.ts         第二检测器，pdfplumber 生成的独立表格结果，用于和主检测结果融合
+    pdf-rapid-table.ts     扫描件 300dpi 深度学习表格结构识别与单元格 OCR，RapidTable SLANet Plus 封装
     ooxml.ts               直接生成 DOCX / XLSX / PPTX（不依赖第三方库）
     documents.ts           PDF 与 Office 文档转换流程
     ocr.ts                 OCRmyPDF + Tesseract 封装
@@ -254,7 +257,7 @@ docs/                   部署、备份、清理、安全、排错文档
 
 ## 已知限制
 
-- PDF 表格识别是启发式算法：复杂排版、合并单元格、跨页表格、旋转页面可能出错；不还原公式、图表、批注。
+- PDF 表格识别采用双检测器 + 深度学习融合，已覆盖常见合并单元格与相邻页续表；复杂排版、低清晰度扫描件仍需人工核对，旋转页面、公式、图表与批注暂不还原。
 - 扫描件需手动开 OCR 才能识别文字与表格；OCR 上限 40 页 / 约 3 分钟，图像表格检测上限 20 页，超出部分只重建文字。
 - OCR 目前只支持中文简体与英文；错字、倾斜、小字、手写需人工校对。
 - 版式还原模式输出整页图片，文字与表格不可编辑。

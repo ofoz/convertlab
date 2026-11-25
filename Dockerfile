@@ -6,7 +6,7 @@
 #             and the React front-end to /app/dist/web (served by the Node
 #             process, so no separate web server is needed)
 #   runtime : Node + LibreOffice + FFmpeg + Poppler + Ghostscript + CJK fonts
-#             + OCRmyPDF/Tesseract (optional OCR for scanned PDFs),
+#             + OCRmyPDF/Tesseract and an isolated Python table reader,
 #             running as an unprivileged user
 #
 # One image serves both roles: PROCESS_ROLE=web starts the HTTP API and
@@ -38,6 +38,8 @@ ENV NODE_ENV=production \
     XDG_CACHE_HOME=/home/app/.cache \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
+    PYTHON_TABLE_BIN=/opt/convertlab-python/bin/python \
+    PYTHONUNBUFFERED=1 \
     NODE_OPTIONS=--disable-warning=ExperimentalWarning
 
 # Runtime toolchain. Keep the LibreOffice component list tight: every extra
@@ -66,6 +68,10 @@ RUN apt-get update \
       unpaper \
       tini \
       ca-certificates \
+      python3 \
+      python3-venv \
+      libglib2.0-0 \
+      libgomp1 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -78,6 +84,33 @@ RUN groupadd --gid 10001 app \
 # Pre-built font cache keeps the first conversion fast and avoids writing to
 # /usr/share/fonts at runtime.
 RUN fc-cache -f
+
+# The table enhancer is intentionally isolated from the Node runtime.  RapidTable
+# ships an ONNX SLANet Plus model and uses OpenCV/onnxruntime; a dedicated venv
+# makes its dependency graph auditable and leaves the main service usable when
+# an optional Python package is unavailable.  RapidTable's metadata requests the
+# desktop opencv-python wheel, so install that package after the headless wheel
+# with --no-deps.
+COPY docker/python-requirements.txt /tmp/convertlab-python-requirements.txt
+RUN python3 -m venv /opt/convertlab-python \
+ && /opt/convertlab-python/bin/pip install --no-cache-dir --upgrade pip \
+ && /opt/convertlab-python/bin/pip install --no-cache-dir -r /tmp/convertlab-python-requirements.txt \
+ && /opt/convertlab-python/bin/pip install --no-cache-dir --no-deps rapid-table==3.0.2 \
+ && /opt/convertlab-python/bin/python - <<'PY'
+import hashlib
+from pathlib import Path
+import pdfplumber
+from rapid_table import ModelType, RapidTable, RapidTableInput
+
+model = RapidTable(RapidTableInput(model_type=ModelType.SLANETPLUS, use_ocr=False))
+model_path = Path(str(model.cfg.model_dir_or_path))
+digest = hashlib.sha256(model_path.read_bytes()).hexdigest()
+expected = 'd57a942af6a2f57d6a4a0372573c696a2379bf5857c45e2ac69993f3b334514b'
+if digest != expected:
+    raise SystemExit(f'Unexpected SLANet Plus model checksum: {digest}')
+print(f'pdfplumber {pdfplumber.__version__}; RapidTable SLANet Plus model {digest}')
+PY \
+ && rm -f /tmp/convertlab-python-requirements.txt
 
 WORKDIR /app
 

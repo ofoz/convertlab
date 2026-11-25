@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { analyzePdfLayout, buildRows, detectTextTables, type PdfLayout } from '../src/converters/pdf-tables.ts';
+import { analyzePdfLayout, buildRows, detectTextTables, fuseRapidTables, mergeCrossPageTables, type PdfLayout, type PdfTable } from '../src/converters/pdf-tables.ts';
+import { buildRapidTables, parseTesseractTsv, type RapidPrediction } from '../src/converters/pdf-rapid-table.ts';
 import { layoutToSheets } from '../src/converters/documents.ts';
 import { BINS, fixture, POppler } from './testkit.ts';
 
@@ -210,4 +211,177 @@ test('跨页续接的表格不会被重复写入 Excel 工作表', () => {
   const tableSheets = sheets.filter((sheet) => sheet.table);
   assert.equal(sheets.length, 1, '默认合并为一个工作表');
   assert.deepEqual(sheets[0]!.rows.filter((row) => row.length > 0), [['序号', '名称'], ['1', '打印纸'], ['2', '签字笔']]);
+});
+
+
+function boundaryTable(rows: string[][], y0: number, y1: number, cells?: PdfLayout['pages'][number]['tables'][number]['cells']): PdfTable {
+  return {
+    merged: false,
+    rows,
+    columnCount: rows[0]?.length ?? 0,
+    columnWeights: [160, 290],
+    bounds: { x0: 50, x1: 500, y0, y1 },
+    ...(cells ? { cells } : {}),
+  };
+}
+
+test('跨页续表只在页面边界相邻时合并，并删除重复表头与重复行', () => {
+  const firstRows = [['序号', '名称'], ['1', '打印纸'], ['2', '签字笔']];
+  const secondRows = [['序号', '名称'], ['2', '签字笔'], ['3', '文件夹']];
+  const firstTable = boundaryTable(firstRows, 100, 730);
+  const secondTable = boundaryTable(secondRows, 45, 760);
+  const pages = [
+    {
+      index: 1, width: 595, height: 842, lines: [], textLength: 20,
+      blocks: [{ type: 'table' as const, rows: firstRows, columnWeights: [160, 290] }],
+      tables: [firstTable],
+    },
+    {
+      index: 2, width: 595, height: 842, lines: [], textLength: 20,
+      blocks: [{ type: 'table' as const, rows: secondRows, columnWeights: [160, 290] }],
+      tables: [secondTable],
+    },
+  ];
+  mergeCrossPageTables(pages);
+  assert.deepEqual(firstTable.rows, [['序号', '名称'], ['1', '打印纸'], ['2', '签字笔'], ['3', '文件夹']]);
+  assert.equal(secondTable.merged, true);
+  assert.equal(pages[1]!.blocks.length, 0);
+});
+
+test('页底和页顶两张同列宽独立表不会误合并', () => {
+  const firstRows = [['项目', '金额'], ['A', '10']];
+  const secondRows = [['项目', '金额'], ['B', '20']];
+  const firstTable = boundaryTable(firstRows, 100, 550, undefined);
+  const secondTable = boundaryTable(secondRows, 100, 600, undefined);
+  const pages = [
+    {
+      index: 1, width: 595, height: 842, lines: [], textLength: 10,
+      blocks: [
+        { type: 'paragraph' as const, text: '第一张表后的说明' },
+        { type: 'table' as const, rows: firstRows, columnWeights: [160, 290] },
+      ],
+      tables: [firstTable],
+    },
+    {
+      index: 2, width: 595, height: 842, lines: [], textLength: 10,
+      blocks: [
+        { type: 'heading' as const, text: '另一张表' },
+        { type: 'table' as const, rows: secondRows, columnWeights: [160, 290] },
+      ],
+      tables: [secondTable],
+    },
+  ];
+  mergeCrossPageTables(pages);
+  assert.deepEqual(firstTable.rows, firstRows);
+  assert.deepEqual(secondTable.rows, secondRows);
+  assert.equal(pages[1]!.blocks.length, 2);
+});
+
+test('跨页合并会平移第二页合并单元格的行坐标', () => {
+  const firstRows = [['标题', ''], ['A', 'B']];
+  const secondRows = [['标题', ''], ['C', 'D']];
+  const firstCells = [
+    { row: 0, column: 0, rowSpan: 1, columnSpan: 2, text: '标题' },
+    { row: 1, column: 0, rowSpan: 1, columnSpan: 1, text: 'A' },
+    { row: 1, column: 1, rowSpan: 1, columnSpan: 1, text: 'B' },
+  ];
+  const secondCells = [
+    { row: 0, column: 0, rowSpan: 1, columnSpan: 2, text: '标题' },
+    { row: 1, column: 0, rowSpan: 1, columnSpan: 1, text: 'C' },
+    { row: 1, column: 1, rowSpan: 1, columnSpan: 1, text: 'D' },
+  ];
+  const firstTable = boundaryTable(firstRows, 100, 730, firstCells);
+  const secondTable = boundaryTable(secondRows, 45, 760, secondCells);
+  const pages = [
+    {
+      index: 1, width: 595, height: 842, lines: [], textLength: 10,
+      blocks: [{ type: 'table' as const, rows: firstRows, columnWeights: [160, 290], cells: firstCells }],
+      tables: [firstTable],
+    },
+    {
+      index: 2, width: 595, height: 842, lines: [], textLength: 10,
+      blocks: [{ type: 'table' as const, rows: secondRows, columnWeights: [160, 290], cells: secondCells }],
+      tables: [secondTable],
+    },
+  ];
+  mergeCrossPageTables(pages);
+  assert.deepEqual(firstTable.rows, [['标题', ''], ['A', 'B'], ['C', 'D']]);
+  assert.equal(firstTable.cells?.find((cell) => cell.text === 'C')?.row, 2);
+  assert.equal(firstTable.cells?.find((cell) => cell.text === 'D')?.row, 2);
+});
+
+
+test('Tesseract TSV 会过滤低置信度与无效坐标，并缩放回 PDF 点', () => {
+  const tsv = [
+    'level	page_num	block_num	par_num	line_num	word_num	left	top	width	height	conf	text',
+    '5	1	1	1	1	1	100	50	80	20	91.5	表格',
+    '5	1	1	1	1	2	200	50	40	20	21.0	噪声',
+    '5	1	1	1	1	3		60	20	20	88.0	坏坐标',
+    '5	1	1	1	1	4	300	80	60	20	87.0	数据',
+  ].join('\n');
+  const words = parseTesseractTsv(tsv, 0.5);
+  assert.deepEqual(words.map((word) => word.text), ['表格', '数据']);
+  assert.deepEqual(words.map((word) => [word.x0, word.y0, word.x1, word.y1]), [[50, 25, 90, 35], [150, 40, 180, 50]]);
+});
+
+test('RapidTable 模型结果会按 OCR 文本生成合并单元格', () => {
+  const pages = [{ index: 1, width: 600, height: 800 }];
+  const predictions: RapidPrediction[] = [{
+    pageIndex: 1,
+    imageWidth: 1200,
+    imageHeight: 1600,
+    logicPoints: [[0, 0, 0, 1], [1, 2, 0, 0], [1, 1, 1, 1], [2, 2, 1, 1]],
+    cellBboxes: [
+      [100, 100, 1100, 200],
+      [100, 200, 500, 400],
+      [500, 200, 1100, 300],
+      [500, 300, 1100, 400],
+    ],
+  }];
+  const words = new Map([[1, [
+    { text: '合并标题', x0: 120, y0: 55, x1: 280, y1: 90 },
+    { text: '纵向左值', x0: 70, y0: 120, x1: 140, y1: 180 },
+    { text: '右一', x0: 280, y0: 120, x1: 350, y1: 145 },
+    { text: '右二', x0: 280, y0: 165, x1: 350, y1: 190 },
+  ]]]);
+  const [table] = buildRapidTables(pages, predictions, words);
+  assert.ok(table);
+  assert.equal(table.columnCount, 2);
+  assert.equal(table.rows.length, 3);
+  assert.equal(table.rows[0]![0], '合并标题');
+  assert.equal(table.cells?.find((cell) => cell.row === 0 && cell.column === 0)?.columnSpan, 2);
+  assert.equal(table.cells?.find((cell) => cell.row === 1 && cell.column === 0)?.rowSpan, 2);
+  assert.equal(table.cells?.filter((cell) => cell.verticalContinuation).length, 1);
+  assert.match(table.rows.flat().join(' '), /纵向左值/);
+  assert.match(table.rows.flat().join(' '), /右一/);
+  assert.match(table.rows.flat().join(' '), /右二/);
+});
+
+test('RapidTable 融合只接受完整的新表，并保留已有正文段落', () => {
+  const native = [{
+    rows: [['甲', '乙'], ['1', '2']],
+    columnCount: 2,
+    columnWeights: [100, 100],
+    bounds: { x0: 40, y0: 100, x1: 540, y1: 250 },
+  }];
+  const complete = {
+    page: 1,
+    rows: [['指标', '结果'], ['准确率', '98%'], ['召回率', '96%']],
+    columnCount: 2,
+    columnWeights: [120, 180],
+    bounds: { x0: 50, y0: 400, x1: 550, y1: 620 },
+    cells: [],
+  };
+  const paragraphFalsePositive = {
+    page: 1,
+    rows: [['正常正文'], ['另一段']],
+    columnCount: 1,
+    columnWeights: [400],
+    bounds: { x0: 40, y0: 700, x1: 500, y1: 760 },
+  };
+  const fused = fuseRapidTables(native, [complete, paragraphFalsePositive]);
+  assert.equal(fused.length, 2);
+  assert.deepEqual(fused[0]!.rows, native[0]!.rows);
+  assert.deepEqual(fused[1]!.rows, complete.rows);
+  assert.equal(fused.filter((table) => table.rows.flat().some((cell) => cell === '正常正文')).length, 0);
 });
