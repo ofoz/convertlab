@@ -7239,10 +7239,13 @@ fieldset[disabled] .cx-options-caption {
     transform: translateY(0);
   }
   .app-header {
-    position: relative;
-    z-index: 20;
+    position: sticky;
+    top: 0;
+    z-index: 50;
     width: 100%;
     padding-block: 20px;
+    background: #f7fbffcc;
+    backdrop-filter: blur(8px);
   }
   .app-nav {
     display: flex;
