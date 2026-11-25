@@ -1182,7 +1182,7 @@ fieldset[disabled] .cx-options-caption {
 }
 .cx-category-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 13px;
 }
 .cx-category {
@@ -1191,7 +1191,7 @@ fieldset[disabled] .cx-options-caption {
   overflow: hidden;
 }
 .cx-category[open] {
-  grid-column: 1 / -1;
+  grid-column: auto;
   border-color: var(--border);
 }
 .cx-category > summary {
