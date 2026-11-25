@@ -2,7 +2,7 @@
 
 这份文档记录的是**这台具体机器**上真实跑起来的部署状态，不是通用教程。通用步骤见 [deployment.md](deployment.md)。
 
-最后更新：2026-11-24
+最后更新：2026-11-25
 
 ## 1. 机器规格
 
@@ -24,7 +24,7 @@
 | `/opt/convertlab` | 项目源码、`.env`、`docker-compose.yml` + `docker-compose.override.yml` |
 | `/usr/local/bin/caddy` | Caddy v2.10.2，接管 80 / 443 |
 | `/etc/caddy/Caddyfile` | 反向代理配置（源文件在 `deploy/caddy/Caddyfile`） |
-| `/etc/caddy/certs/dp/` | 从旧环境继承的 `dp.192163.xyz` 证书（有效期至 2027-02-16） |
+| `/var/lib/caddy/.local/share/caddy/` | Caddy 自动申请的 `fileshop.shop` 证书与 ACME 状态 |
 | `/var/backups/convertlab` | 每日 `pg_dump` 与 `.env` 备份 |
 | `/usr/local/bin/convertlab-backup` | 备份脚本（源文件 `deploy/backup.sh`） |
 | `/root/backup-before-convertlab-20261123-1822` | 迁移前旧环境的备份（1Panel 数据、dp 站点证书、dapan-cloud 配置） |
@@ -55,14 +55,14 @@ convertlab-redis-1     12 MB
 
 | 地址 | 端口 | 证书 |
 | --- | --- | --- |
-| `http://111.91.29.56` | 80 | 无（明文 HTTP） |
-| `https://dp.192163.xyz` | 443 | 有效证书，推荐用这个 |
+| `http://fileshop.shop` / `http://111.91.29.56` | 80 | 永久跳转到 HTTPS |
+| `https://fileshop.shop` | 443 | Caddy 自动申请和续期证书，推荐用这个 |
 
-`dp.192163.xyz` 是 Cloudflare 上的 **DNS only** 记录（小云朵关闭），直接指向本机 IP。证书是从迁移前环境继承的 Let's Encrypt 证书。
+`fileshop.shop` 的 A 记录指向本机 IP。Caddy 通过 ACME 自动申请并续期证书。
 
 应用本身只监听 `127.0.0.1:8080`，公网无法直连，必须经过 Caddy。
 
-如果要换一个专用域名（例如 `files.192163.xyz`）：在 Cloudflare 加一条 A 记录指向 `111.91.29.56`（先关小云朵），然后把 `/etc/caddy/Caddyfile` 里的 `https://dp.192163.xyz` 改成新域名并删掉 `tls` 两行（让 Caddy 自动申请证书），最后 `systemctl reload caddy`。Caddy 会自动完成 HTTP-01 校验。
+如果要再换域名：先让新域名的 A/AAAA 记录指向本机，然后把 `/etc/caddy/Caddyfile` 中 `fileshop.shop` 替换为新域名，执行 `caddy validate` 后重载 Caddy。Caddy 会自动完成证书申请和续期。
 
 ## 5. 常用运维命令
 
@@ -103,7 +103,7 @@ LibreOffice 路径（`deploy/verify/libreoffice_probe.py`）：DOCX → PDF 成�
 
 容器内 `doctor.js` 全部通过：LibreOffice 7.4.7.2、FFmpeg 5.1.9、Poppler、Ghostscript 10.00、PostgreSQL 16.16、Redis PONG、`/data` 可写。
 
-外部访问：`http://111.91.29.56` 与 `https://dp.192163.xyz` 均返回 200，前端资源正常加载。
+历史上外部访问曾使用旧域名；当前规范地址以本文第 4 节和本次验收记录为准。
 
 ## 7. 迁移记录：删掉了什么
 
@@ -157,7 +157,7 @@ docker compose up -d --no-build web worker
 - 真实 5 页带表格 PDF（`WorkBuddy能力自述.pdf`）：DOCX 4 张表（10×5、6×2、4×3、4×3，
   与原版 Word 完全一致），正文 1945 字；XLSX 默认把正文与 4 张表放进 1 个工作表
 - OCR 链路（渲染成纯图片 PDF 后开 OCR）：识别成功，12 秒出 docx，文字层 698 字
-- 外部访问：`http://111.91.29.56` 与 `https://dp.192163.xyz` 均 200，证书有效期至 2027-02-16
+- 外部访问：HTTP 请求会跳转至 HTTPS，规范域名由 Caddy 自动管理证书
 - 常驻内存反而更低：worker 28 MB、web 45 MB（升级前 53 / 77 MB）
 
 ### 顺带修的两个 PDF 问题
@@ -241,11 +241,11 @@ PDF 转 Excel 的默认行为已从“每张表一个工作表”改成“整份
    systemctl restart ssh
    ```
 
-2. **HTTP 是明文的**。`http://111.91.29.56` 上登录会把密码和会话 Cookie 明文传输。日常请用 `https://dp.192163.xyz`。若要强制 HTTPS，把 Caddyfile 里 `:80` 那段改成 `redir https://dp.192163.xyz{uri} permanent`。
+2. **必须走 HTTPS**。Caddy 已把 80 端口永久跳转到 <https://fileshop.shop>，登录和文件传输请使用 HTTPS 地址。
 
 3. **注册是开放状态**（`ALLOW_REGISTRATION=true`）。公网可见的转换工具有被陌生人刷配额的风险。改 `.env` 为 `false` 后 `docker compose up -d` 即可关闭，已有账号不受影响。
 
-4. **证书续期**：继承的证书 2027-02-16 到期，目前没有自动续期。到期前把 Caddyfile 里的 `tls` 两行删掉、改用域名让 Caddy 自动申请，或手动续期。
+4. **证书续期**：由 Caddy 自动管理；若 ACME 失败，检查 80/443 入站规则和 `/var/log/caddy/caddy.log`。
 
 5. **备份只在本机**。`/var/backups/convertlab` 与数据在同一块盘上，整机故障时会一起丢。建议定期把该目录同步到对象存储或另一台机器。
 

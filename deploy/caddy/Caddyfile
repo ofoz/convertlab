@@ -1,11 +1,10 @@
 # ConvertLab — TLS terminator.
 #
-#   :80            plain HTTP catch-all (works over the bare IP address)
-#   dp.192163.xyz  HTTPS with the certificate inherited from the previous setup
+#   :80            permanent redirect to the canonical HTTPS site
+#   fileshop.shop  HTTPS with an automatically managed certificate
 #
 # There is deliberately no HTTPS listener for the bare IP: a public CA cannot
-# issue a certificate for 111.91.29.56, so https://<ip> would only ever show a
-# browser warning. Use http://<ip> or https://dp.192163.xyz.
+# issue a certificate for 111.91.29.56. Use https://fileshop.shop.
 #
 # Every block proxies to the application, which only listens on 127.0.0.1:8080.
 {
@@ -36,10 +35,9 @@
 }
 
 :80 {
-	import convertlab
+	redir https://fileshop.shop{uri} permanent
 }
 
-https://dp.192163.xyz {
-	tls /etc/caddy/certs/dp/fullchain.pem /etc/caddy/certs/dp/privkey.pem
+https://fileshop.shop {
 	import convertlab
 }

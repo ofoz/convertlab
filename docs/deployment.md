@@ -109,7 +109,7 @@ files.example.com {
 }
 ```
 
-仓库里的 `deploy/caddy/Caddyfile` 就是线上在用的版本，可以直接参考（它同时处理「IP 直连走 80」和「域名走 443」两种情况）。
+仓库里的 `deploy/caddy/Caddyfile` 是这台服务器在用的版本，可以直接参考：80 端口永久跳转到规范域名，443 端口由 Caddy 自动申请和续期证书。
 
 Nginx 示例：
 

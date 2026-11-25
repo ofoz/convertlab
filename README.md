@@ -10,7 +10,7 @@
 ![Postgres](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)
 
-> 线上实例：`https://dp.192163.xyz`（Caddy 接管 80 / 443）。这台华为云 ECS 的规格、内存调优、
+> 线上实例：<https://fileshop.shop>（Caddy 接管 80 / 443，HTTP 自动跳转 HTTPS）。这台华为云 ECS 的规格、内存调优、
 > 运维命令、迁移记录与已知风险见 [docs/this-server.md](docs/this-server.md)。
 
 ---
