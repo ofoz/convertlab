@@ -1109,6 +1109,8 @@ export default function WorkspacePage() {
         </span>
       </div>
 
+      {groups.length > 0 ? <FormatLibrary groups={groups} /> : null}
+
       <section className="business-faq" aria-labelledby="business-faq-title">
         <div className="business-faq-heading">
           <div>
@@ -1141,8 +1143,6 @@ export default function WorkspacePage() {
           </details>
         </div>
       </section>
-
-      {groups.length > 0 ? <FormatLibrary groups={groups} /> : null}
 
       <details className="business-credits">
         <summary>角色素材与演出说明</summary>
