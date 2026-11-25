@@ -5346,41 +5346,6 @@ fieldset[disabled] .cx-options-caption {
   padding-top: 22px;
   padding-bottom: 54px;
 }
-.business-welcome {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 6px 3px 23px;
-}
-.business-welcome .eyebrow {
-  color: #7390bb;
-  margin-bottom: 8px;
-}
-.business-welcome h1 {
-  margin: 0 0 10px;
-  color: #29476c;
-  font-size: clamp(23px, 2.6vw, 34px);
-  font-weight: 750;
-  letter-spacing: -0.035em;
-  line-height: 1.45;
-}
-.business-welcome h1 span {
-  color: #3b80dc;
-}
-.business-welcome p:not(.eyebrow) {
-  margin: 0;
-  color: #6982a3;
-  font-size: 13px;
-  line-height: 1.8;
-}
-.business-welcome > button {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-}
 .business-order {
   width: 100%;
   max-width: none;
@@ -5987,34 +5952,10 @@ fieldset[disabled] .cx-options-caption {
   .business-steps > li:nth-child(2)::after {
     display: none;
   }
-  .business-welcome {
-    align-items: flex-start;
-  }
-  .business-welcome h1 {
-    font-size: 26px;
-  }
-  .business-welcome > button {
-    font-size: 12px;
-    padding-inline: 13px;
-  }
 }
 @media (max-width: 640px) {
   .business-page {
     padding-top: 16px;
-  }
-  .business-welcome {
-    flex-direction: column;
-    gap: 15px;
-    padding-bottom: 19px;
-  }
-  .business-welcome h1 {
-    font-size: 25px;
-  }
-  .business-welcome h1 span {
-    display: inline-block;
-  }
-  .business-welcome p:not(.eyebrow) {
-    font-size: 12px;
   }
   .business-process {
     padding: 17px 14px 14px;
@@ -6031,10 +5972,6 @@ fieldset[disabled] .cx-options-caption {
   }
   .business-process-heading > p {
     font-size: 10px;
-  }
-  .business-welcome > button {
-    width: 100%;
-    min-height: 43px;
   }
   .business-order {
     margin-top: 18px;

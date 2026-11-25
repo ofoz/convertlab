@@ -554,19 +554,6 @@ export default function WorkspacePage() {
       data-service-workspace
       data-stage={stage}
     >
-      <div className="business-welcome">
-        <div>
-          <h1>
-            欢迎来到<span>大肥鱼格式工坊</span>
-          </h1>
-          <p>选好目标格式，上传文件，等待处理完成后下载结果。无需注册即可浏览，提交转换时再登录。</p>
-        </div>
-        <button type="button" id="open-business" className="btn-primary" onClick={showPicker}>
-          <SymbolIcon name="sparkles" size={18} />
-          我要办理转换
-        </button>
-      </div>
-
       <section className="business-process" aria-labelledby="business-process-title">
         <div className="business-process-heading">
           <div>
