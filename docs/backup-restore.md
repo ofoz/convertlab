@@ -7,7 +7,7 @@
 | 数据 | 位置 | 是否必须 |
 | --- | --- | --- |
 | 数据库 | 卷 `convertlab-pgdata` | **必须** |
-| 上传与输出文件 | 卷 `convertlab-data`（`/data/uploads`、`/data/outputs`） | 可选；文件本身 2 小时过期，除非需要保留某个结果 |
+| 上传与输出文件 | 卷 `convertlab-data`（`/data/uploads`、`/data/outputs`） | 可选；文件本身 12 小时过期，除非需要保留某个结果 |
 | 配置 | 宿主机 `.env` | **必须**，但请勿提交到版本库 |
 | 队列状态 | 卷 `convertlab-redis` | 不需要，重启后重建 |
 

@@ -87,7 +87,7 @@ export function loadConfig(): AppConfig {
     adminPassword: envStr('ADMIN_PASSWORD', ''),
     sessionTtlDays: envInt('SESSION_TTL_DAYS', 30, 1, 365),
     allowRegistration: envBool('ALLOW_REGISTRATION', true),
-    fileTtlHours: envInt('FILE_TTL_HOURS', 2, 1, 168),
+    fileTtlHours: envInt('FILE_TTL_HOURS', 12, 1, 168),
     maxFileBytes: maxFileMb * 1024 * 1024,
     maxBatchFiles: envInt('MAX_BATCH_FILES', 20, 1, 50),
     dailyJobs: envInt('DAILY_JOBS', 20, 1, 10000),

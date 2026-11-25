@@ -121,7 +121,7 @@ export default function HistoryPage() {
           <div className="sx-panel-head sx-history-head">
             <div>
               <h2 id="sx-history-title">任务列表</h2>
-              <p className="muted">结果文件保留 2 小时，过期后自动清理。</p>
+              <p className="muted">结果文件保留 12 小时，过期后自动清理。</p>
             </div>
             <div className="sx-selection-actions">
               <button

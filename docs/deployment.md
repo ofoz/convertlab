@@ -45,7 +45,7 @@ POSTGRES_PASSWORD=<另一条随机字符串>
 ```env
 APP_BASE_URL=https://files.example.com   # 对外访问地址，影响 Cookie 与链接
 SECURE_COOKIES=true                      # 上 HTTPS 后开启
-FILE_TTL_HOURS=2                         # 文件保留时长
+FILE_TTL_HOURS=12                        # 文件保留时长
 DAILY_JOBS=20                            # 每人每天任务数
 WORKER_CONCURRENCY=3                     # 同时转换数，与 CPU 核数匹配
 ```

@@ -9,7 +9,7 @@ export function AppFooter({ minimal = false }: { minimal?: boolean }) {
           </a>
         </span>
         {minimal ? null : (
-          <span className="app-footer-version">文件 2 小时后自动清理 · 单文件上限 100 MB</span>
+          <span className="app-footer-version">文件 12 小时后自动清理 · 单文件上限 100 MB</span>
         )}
       </div>
     </footer>

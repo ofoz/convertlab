@@ -21,7 +21,7 @@ docker compose exec -T postgres pg_dump \
   -U convertlab -d convertlab --clean --if-exists --no-owner \
   | gzip -9 > "$DEST/convertlab-db-$STAMP.sql.gz"
 
-# Uploaded and converted files are disposable (2 h TTL); only the database and
+# Uploaded and converted files are disposable (12 h TTL); only the database and
 # .env are worth keeping. Copy .env so a rebuild can be reproduced.
 cp -p .env "$DEST/convertlab-env-$STAMP.txt"
 chmod 600 "$DEST/convertlab-env-$STAMP.txt"
