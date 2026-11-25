@@ -109,8 +109,7 @@ expected = 'd57a942af6a2f57d6a4a0372573c696a2379bf5857c45e2ac69993f3b334514b'
 if digest != expected:
     raise SystemExit(f'Unexpected SLANet Plus model checksum: {digest}')
 print(f'pdfplumber {pdfplumber.__version__}; RapidTable SLANet Plus model {digest}')
-PY \
- && rm -f /tmp/convertlab-python-requirements.txt
+PY
 
 WORKDIR /app
 
