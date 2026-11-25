@@ -3,7 +3,7 @@ import { ApiError, downloadUrl, request, subscribeJob, uploadForm, zipUrl } from
 import { FormatLibrary } from '../components/FormatLibrary';
 import { FormatPicker, type TargetChoice } from '../components/FormatPicker';
 import { ServiceHall, type HallStage } from '../components/ServiceHall';
-import { SymbolIcon } from '../components/Symbols';
+import { SymbolIcon, type SymbolName } from '../components/Symbols';
 import { buildCatalog, buildTargets } from '../data/catalog';
 import { useSession } from '../session';
 import type { ConversionOptions, FormatInfo, FormatsResponse, Job, JobStatus } from '../types';
@@ -14,6 +14,17 @@ const TERMINAL: JobStatus[] = ['success', 'partial', 'failed', 'cancelled'];
 type Picked = { key: string; file: File; ext: string };
 
 const STEP_LABELS = ['choose', 'receive', 'work', 'collect'] as const;
+
+const BUSINESS_STEPS: ReadonlyArray<{
+  label: string;
+  description: string;
+  icon: SymbolName;
+}> = [
+  { label: '选择格式', description: '告诉我想转换成什么格式', icon: 'grid' },
+  { label: '交给鲸鱼娘', description: '上传一个或多个待处理文件', icon: 'upload' },
+  { label: '耐心等一下', description: '后台处理，进度会实时更新', icon: 'sparkles' },
+  { label: '取走文件', description: '转换完成后下载结果文件', icon: 'download' },
+];
 
 function stepIndex(stage: HallStage): number {
   if (stage === 'welcome' || stage === 'choosing') return 0;
@@ -548,13 +559,46 @@ export default function WorkspacePage() {
           <h1>
             欢迎来到<span>大肥鱼格式工坊</span>
           </h1>
-          <p>先选目标格式，再把文件交给鲸鱼娘。支持 PDF 表格转 Word / Excel，保留框线、表头与可合并单元格；扫描件可开启中英文 OCR，并使用 300 dpi 专用表格结构模型重建。办理完成后，点桌上的文件取件。</p>
+          <p>选好目标格式，上传文件，等待处理完成后下载结果。无需注册即可浏览，提交转换时再登录。</p>
         </div>
         <button type="button" id="open-business" className="btn-primary" onClick={showPicker}>
           <SymbolIcon name="sparkles" size={18} />
           我要办理转换
         </button>
       </div>
+
+      <section className="business-process" aria-labelledby="business-process-title">
+        <div className="business-process-heading">
+          <div>
+            <p className="eyebrow">HOW IT WORKS</p>
+            <h2 id="business-process-title">使用流程</h2>
+          </div>
+          <p>四步完成文件转换，进度实时更新</p>
+        </div>
+        <ol className="business-steps" aria-label="办理流程">
+          {BUSINESS_STEPS.map((step, index) => {
+            const state = index === active ? 'active' : index < active ? 'complete' : 'pending';
+            return (
+              <li
+                key={step.label}
+                data-business-step={STEP_LABELS[index]}
+                data-state={state}
+                className={state === 'active' ? 'is-active' : state === 'complete' ? 'is-complete' : undefined}
+              >
+                <span className="business-step-index">{index + 1}</span>
+                <span className="business-step-icon"><SymbolIcon name={step.icon} size={17} /></span>
+                <span className="business-step-copy">
+                  <strong>{step.label}</strong>
+                  <small>{step.description}</small>
+                </span>
+                <span className="business-step-state" aria-hidden="true">
+                  {state === 'complete' ? <SymbolIcon name="check" size={13} /> : state === 'active' ? '当前' : '待开始'}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
 
       <ServiceHall
         stage={stage}
@@ -585,19 +629,6 @@ export default function WorkspacePage() {
             {ticket}
           </span>
         </div>
-
-        <ol className="business-steps" aria-label="办理流程">
-          {(['选择格式', '交给鲸鱼娘', '耐心等一下', '取走文件'] as const).map((label, index) => (
-            <li
-              key={label}
-              data-business-step={STEP_LABELS[index]}
-              className={index === active ? 'is-active' : index < active ? 'is-complete' : undefined}
-            >
-              <span>{index + 1}</span>
-              {label}
-            </li>
-          ))}
-        </ol>
 
         <form
           id="convert-form"
@@ -1090,6 +1121,39 @@ export default function WorkspacePage() {
           文件由当前服务器处理
         </span>
       </div>
+
+      <section className="business-faq" aria-labelledby="business-faq-title">
+        <div className="business-faq-heading">
+          <div>
+            <p className="eyebrow">HELP BEFORE YOU START</p>
+            <h2 id="business-faq-title">常见问题</h2>
+          </div>
+          <span>表格、OCR 与识别效果说明</span>
+        </div>
+        <div className="business-faq-list">
+          <details>
+            <summary>PDF 里的表格转成 Word 后会保留表格线吗？</summary>
+            <p>
+              会。检测到稳定表格结构时，Word 会重建为带边框的可编辑表格，并尽量保留表头、合并单元格和跨页续表；PDF 转 Excel 默认把正文和表格按阅读顺序放在一个工作表里，只有选择“每页一个工作表”时才会拆分。
+            </p>
+          </details>
+          <details>
+            <summary>扫描件或图片 PDF 需要开启 OCR 吗？</summary>
+            <p>
+              需要。扫描件会走 OCR；表格识别会使用 300 dpi 渲染和 RapidTable 结构模型重建网格、合并单元格与中英文内容。电子 PDF 会同时使用 Poppler 线条检测和 pdfplumber 检测结果进行融合。OCR 识别结果仍建议人工校对。
+            </p>
+          </details>
+          <details>
+            <summary>哪些情况可能影响识别效果？</summary>
+            <ul>
+              <li>页面倾斜或旋转、字体过小、手写内容。</li>
+              <li>文字颜色过浅、表格线断裂或模糊。</li>
+              <li>复杂公式和特殊符号、非标准合并单元格。</li>
+              <li>多栏正文与无边框表格混排。</li>
+            </ul>
+          </details>
+        </div>
+      </section>
 
       {groups.length > 0 ? <FormatLibrary groups={groups} /> : null}
 
