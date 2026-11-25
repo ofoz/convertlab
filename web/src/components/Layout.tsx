@@ -12,11 +12,12 @@ export function Layout({
   children: ReactNode;
 }) {
   return (
-    <div className="app-body">
+    <div className={`app-body${auth ? ' app-body--auth' : ''}`}>
       <a className="skip-link" href="#main-content">
         跳转到主要内容
       </a>
       <AppHeader active={active} minimal={auth} />
+      <div className="app-header-spacer" aria-hidden="true" />
       {children}
       <AppFooter minimal={auth} />
     </div>

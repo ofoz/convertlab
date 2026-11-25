@@ -7075,8 +7075,21 @@ fieldset[disabled] .cx-options-caption {
 }
 @layer components {
   .app-body {
+    --app-header-offset: 114px;
     display: flex;
     flex-direction: column;
+  }
+  .app-body--auth {
+    --app-header-offset: 114px;
+  }
+  .app-header-spacer {
+    flex: none;
+    height: var(--app-header-offset);
+  }
+  #main-content,
+  .business-order,
+  .service-hall {
+    scroll-margin-top: calc(var(--app-header-offset) + 12px);
   }
   .app-body > main,
   .app-body > .app-main {
@@ -7239,8 +7252,10 @@ fieldset[disabled] .cx-options-caption {
     transform: translateY(0);
   }
   .app-header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 50;
     width: 100%;
     padding-block: 20px;
@@ -7383,6 +7398,12 @@ fieldset[disabled] .cx-options-caption {
     font-variant-numeric: tabular-nums;
   }
   @media (max-width: 760px) {
+    .app-body {
+      --app-header-offset: 165px;
+    }
+    .app-body--auth {
+      --app-header-offset: 113px;
+    }
     .app-nav {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -7420,6 +7441,12 @@ fieldset[disabled] .cx-options-caption {
     }
   }
   @media (max-width: 480px) {
+    .app-body {
+      --app-header-offset: 152px;
+    }
+    .app-body--auth {
+      --app-header-offset: 100px;
+    }
     .app-container {
       width: calc(100% - 32px);
     }
