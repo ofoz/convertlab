@@ -6,6 +6,7 @@ import { runCommand } from './process.ts';
 import { detectImageTableLines, type RasterPageRequest, type RasterSegment } from './pdf-image-tables.ts';
 import { detectExternalPdfTables, type ExternalTable } from './pdf-plumber.ts';
 import { detectRapidTables, type RapidTableResult } from './pdf-rapid-table.ts';
+import { normalizePdfText } from './pdf-text.ts';
 
 /**
  * Layout analysis for text-based PDFs.
@@ -123,7 +124,7 @@ export function parsePages(xhtml: string): RawPage[] {
     let wordMatch: RegExpExecArray | null;
     while ((wordMatch = wordPattern.exec(body))) {
       const wordAttrs = wordMatch[1] ?? '';
-      const text = decodeXml((wordMatch[2] ?? '').replace(/<[^>]+>/g, '')).trim();
+      const text = normalizePdfText(decodeXml((wordMatch[2] ?? '').replace(/<[^>]+>/g, ''))).trim();
       if (!text) continue;
       const x0 = attrNumber(wordAttrs, 'xMin');
       const x1 = attrNumber(wordAttrs, 'xMax');

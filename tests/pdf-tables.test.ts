@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { analyzePdfLayout, buildRows, detectTextTables, fuseRapidTables, mergeCrossPageTables, type PdfLayout, type PdfTable } from '../src/converters/pdf-tables.ts';
 import { buildRapidTables, parseTesseractTsv, type RapidPrediction } from '../src/converters/pdf-rapid-table.ts';
 import { layoutToSheets } from '../src/converters/documents.ts';
+import { detectExternalPdfTables } from '../src/converters/pdf-plumber.ts';
 import { BINS, fixture, POppler } from './testkit.ts';
 
 const ready = POppler;
@@ -46,6 +47,29 @@ test('带边框 PDF 的表格被重建为规整单元格，标题与脚注不进
   assert.ok(paragraphs.some((text) => text.includes('含税')), '脚注不应被吞进表格');
   assert.ok(!table.rows.flat().join(' ').includes('制表部门'), '表格单元格里不应出现制表信息');
   assert.ok(!table.rows.flat().join(' ').includes('含税'), '表格单元格里不应出现脚注');
+});
+
+test('pdfplumber 第二检测器用最近边界映射单元格，不伪造跨列跨行', {
+  skip: process.env.PYTHON_TABLE_BIN ? false : '设置 PYTHON_TABLE_BIN 以运行可选的 pdfplumber 集成测试',
+}, async () => {
+  const tables = await detectExternalPdfTables({
+    inputPath: fixture('table-bordered.pdf'),
+    outputDir: fixture('.'),
+    outputBase: 'table-bordered',
+    sourceExt: 'pdf',
+    target: 'docx',
+    options: { pdf: { mode: 'editable', dpi: 300, secondDetector: true } },
+    workDir: fixture('.'),
+    timeoutMs: 120_000,
+    bins: BINS,
+  });
+  assert.equal(tables.length, 1);
+  const table = tables[0]!;
+  assert.equal(table.rowCount, 6);
+  assert.equal(table.columnCount, 6);
+  assert.equal(table.cells.length, 36);
+  assert.ok(table.cells.every((cell) => cell.rowSpan === 1 && cell.columnSpan === 1), '规则网格不应产生合并跨度');
+  assert.deepEqual(table.rows[0], ['序号', '物料名称', '规格', '数量', '单价（元）', '小计（元）']);
 });
 
 test('无边框 PDF 表格同样按列对齐识别', { skip: ready ? false : '需要 Poppler pdftotext' }, async () => {

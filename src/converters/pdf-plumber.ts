@@ -1,6 +1,7 @@
 import { runCommand } from './process.ts';
 import type { ConverterInput } from './types.ts';
 import type { PdfCell } from './pdf-tables.ts';
+import { normalizePdfText } from './pdf-text.ts';
 
 /**
  * A second, independent born-digital table detector.
@@ -86,12 +87,24 @@ try:
                     return out
                 xs = levels(xs)
                 ys = levels(ys)
+                def nearest_axis_index(values, target):
+                    return min(range(len(values)), key=lambda i: abs(values[i] - target))
+
                 spans = []
                 for (x0, top, x1, bottom), text in cells.items():
-                    column = min(range(len(xs) - 1), key=lambda i: abs(xs[i] - x0))
-                    end_column = max(range(1, len(xs)), key=lambda i: abs(xs[i] - x1))
-                    row = min(range(len(ys) - 1), key=lambda i: abs(ys[i] - top))
-                    end_row = max(range(1, len(ys)), key=lambda i: abs(ys[i] - bottom))
+                    column = nearest_axis_index(xs, x0)
+                    end_column = nearest_axis_index(xs, x1)
+                    row = nearest_axis_index(ys, top)
+                    end_row = nearest_axis_index(ys, bottom)
+                    # Clamp malformed or slightly out-of-order cell geometry.
+                    if end_column <= column:
+                        end_column = column + 1
+                    if end_row <= row:
+                        end_row = row + 1
+                    end_column = min(end_column, len(xs) - 1)
+                    end_row = min(end_row, len(ys) - 1)
+                    column = min(column, end_column - 1)
+                    row = min(row, end_row - 1)
                     spans.append({
                         "row": row,
                         "column": column,
@@ -139,7 +152,15 @@ export async function detectExternalPdfTables(input: ConverterInput): Promise<Ex
     if (!Array.isArray(parsed.tables)) return [];
     return parsed.tables
       .filter((table) => table.pageIndex >= 1 && Array.isArray(table.rows) && table.columnCount > 0)
-      .slice(0, 240);
+      .slice(0, 240)
+      .map((table) => ({
+        ...table,
+        rows: table.rows.map((row) => row.map((cell) => normalizePdfText(String(cell ?? '')))),
+        cells: (Array.isArray(table.cells) ? table.cells : []).map((cell) => ({
+          ...cell,
+          text: normalizePdfText(String(cell.text ?? '')),
+        })),
+      }));
   } catch {
     return [];
   } finally {
