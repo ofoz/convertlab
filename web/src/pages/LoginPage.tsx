@@ -3,6 +3,9 @@ import { ApiError, request } from '../api';
 import { navigate, safeNext } from '../router';
 import { useSession } from '../session';
 import type { AuthPayload } from '../session';
+import { AuthMascot, type AuthMascotMode } from '../components/AuthMascot';
+import { AuthPasswordField } from '../components/AuthPasswordField';
+import { useAuthMascotMode } from '../components/useAuthMascotMode';
 
 type Mode = 'login' | 'register';
 
@@ -14,25 +17,26 @@ const SCENES: Record<Mode, { image: string; message: string }> = {
 export function AuthScene({
   image,
   message,
+  mascotMode = 'idle',
 }: {
   image: string;
   message: string;
+  mascotMode?: AuthMascotMode;
 }) {
+  const sceneMessage =
+    mascotMode === 'covered'
+      ? '密码我不看！眼睛捂好啦…'
+      : mascotMode === 'peeking'
+        ? '只偷看一眼，我马上就闭上～'
+        : message;
   return (
     <aside className="sx-auth-scene" aria-label="工坊接待处">
       <div className="sx-auth-arch" aria-hidden="true" />
       <div className="sx-auth-greeting">
         <strong>工坊接待处</strong>
-        <p>{message}</p>
+        <p>{sceneMessage}</p>
       </div>
-      <div className="sx-auth-actor" aria-hidden="true">
-        <img
-          className="sx-auth-character"
-          data-auth-mascot
-          src={`/characters/display/384/${image}`}
-          alt=""
-        />
-      </div>
+      <AuthMascot restingImage={image} mode={mascotMode} />
       <div className="sx-auth-counter" aria-hidden="true">
         <span>大肥鱼 · 接待</span>
       </div>
@@ -45,12 +49,19 @@ export default function LoginPage({ next = null, mode }: { next?: string | null;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [focusedPassword, setFocusedPassword] = useState<'password' | 'confirm' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const register = mode === 'register';
   const scene = SCENES[mode];
   const returnTo = safeNext(next);
+  const mascotMode: AuthMascotMode = useAuthMascotMode(
+    focusedPassword,
+    focusedPassword === 'confirm' ? confirmVisible : passwordVisible,
+  );
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,7 +90,7 @@ export default function LoginPage({ next = null, mode }: { next?: string | null;
   return (
     <main id="main-content" className="app-container sx-auth-page" tabIndex={-1}>
       <div className="surface sx-auth-layout" data-auth-scene={mode}>
-        <AuthScene image={scene.image} message={scene.message} />
+        <AuthScene image={scene.image} message={scene.message} mascotMode={mascotMode} />
         <section className="sx-auth-card">
           <div className="sx-auth-heading">
             <span className="eyebrow">{register ? '新用户' : '欢迎回来'}</span>
@@ -112,33 +123,31 @@ export default function LoginPage({ next = null, mode }: { next?: string | null;
                 onChange={(event) => setEmail(event.target.value)}
               />
             </label>
-            <label className="sx-labeled-field">
-              <span>密码</span>
-              <input
-                className="form-field"
-                type="password"
-                name="password"
-                placeholder={register ? '设置密码（至少 8 位）' : '输入密码'}
-                autoComplete={register ? 'new-password' : 'current-password'}
-                required
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </label>
+            <AuthPasswordField
+              label="密码"
+              name="password"
+              placeholder={register ? '设置密码（至少 8 位）' : '输入密码'}
+              autoComplete={register ? 'new-password' : 'current-password'}
+              value={password}
+              visible={passwordVisible}
+              onChange={(event) => setPassword(event.target.value)}
+              onFocus={() => setFocusedPassword('password')}
+              onBlur={() => setFocusedPassword(null)}
+              onToggle={() => setPasswordVisible((current) => !current)}
+            />
             {register ? (
-              <label className="sx-labeled-field">
-                <span>确认密码</span>
-                <input
-                  className="form-field"
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="再次输入密码"
-                  autoComplete="new-password"
-                  required
-                  value={confirm}
-                  onChange={(event) => setConfirm(event.target.value)}
-                />
-              </label>
+              <AuthPasswordField
+                label="确认密码"
+                name="confirmPassword"
+                placeholder="再次输入密码"
+                autoComplete="new-password"
+                value={confirm}
+                visible={confirmVisible}
+                onChange={(event) => setConfirm(event.target.value)}
+                onFocus={() => setFocusedPassword('confirm')}
+                onBlur={() => setFocusedPassword(null)}
+                onToggle={() => setConfirmVisible((current) => !current)}
+              />
             ) : null}
             <button
               type="submit"

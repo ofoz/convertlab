@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { ApiError, request } from '../api';
 import { AuthScene } from './LoginPage';
+import { AuthPasswordField } from '../components/AuthPasswordField';
+import { useAuthMascotMode } from '../components/useAuthMascotMode';
 import { useSession } from '../session';
 import { formatBytes, formatDateTime } from '../utils';
 
@@ -31,9 +33,21 @@ export default function AccountPage() {
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [currentVisible, setCurrentVisible] = useState(false);
+  const [nextVisible, setNextVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [focusedPassword, setFocusedPassword] = useState<'current' | 'next' | 'confirm' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const mascotMode = useAuthMascotMode(
+    focusedPassword,
+    focusedPassword === 'current'
+      ? currentVisible
+      : focusedPassword === 'next'
+        ? nextVisible
+        : confirmVisible,
+  );
 
   async function onChangePassword(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,7 +81,11 @@ export default function AccountPage() {
   return (
     <main id="main-content" className="app-container sx-auth-page" tabIndex={-1}>
       <div className="surface sx-auth-layout" data-auth-scene="account">
-        <AuthScene image="whale-serious.webp" message="需要更新账号信息？在这里就好。" />
+        <AuthScene
+          image="whale-serious.webp"
+          message="需要更新账号信息？在这里就好。"
+          mascotMode={mascotMode}
+        />
         <section className="sx-auth-card sx-account-card">
           <div className="sx-auth-heading">
             <span className="eyebrow">个人设置</span>
@@ -126,44 +144,39 @@ export default function AccountPage() {
                 <p>{success}</p>
               </div>
             ) : null}
-            <label className="sx-labeled-field">
-              <span>当前密码</span>
-              <input
-                className="form-field"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={current}
-                onChange={(event) => setCurrent(event.target.value)}
-                placeholder="验证当前密码"
-              />
-            </label>
-            <label className="sx-labeled-field">
-              <span>
-                新密码 <small>（至少 8 位）</small>
-              </span>
-              <input
-                className="form-field"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={next}
-                onChange={(event) => setNext(event.target.value)}
-                placeholder="输入新密码"
-              />
-            </label>
-            <label className="sx-labeled-field">
-              <span>确认新密码</span>
-              <input
-                className="form-field"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={confirm}
-                onChange={(event) => setConfirm(event.target.value)}
-                placeholder="再次输入新密码"
-              />
-            </label>
+            <AuthPasswordField
+              label="当前密码"
+              placeholder="验证当前密码"
+              autoComplete="current-password"
+              value={current}
+              visible={currentVisible}
+              onChange={(event) => setCurrent(event.target.value)}
+              onFocus={() => setFocusedPassword('current')}
+              onBlur={() => setFocusedPassword(null)}
+              onToggle={() => setCurrentVisible((visible) => !visible)}
+            />
+            <AuthPasswordField
+              label={<><span>新密码 <small>（至少 8 位）</small></span></>}
+              placeholder="输入新密码"
+              autoComplete="new-password"
+              value={next}
+              visible={nextVisible}
+              onChange={(event) => setNext(event.target.value)}
+              onFocus={() => setFocusedPassword('next')}
+              onBlur={() => setFocusedPassword(null)}
+              onToggle={() => setNextVisible((visible) => !visible)}
+            />
+            <AuthPasswordField
+              label="确认新密码"
+              placeholder="再次输入新密码"
+              autoComplete="new-password"
+              value={confirm}
+              visible={confirmVisible}
+              onChange={(event) => setConfirm(event.target.value)}
+              onFocus={() => setFocusedPassword('confirm')}
+              onBlur={() => setFocusedPassword(null)}
+              onToggle={() => setConfirmVisible((visible) => !visible)}
+            />
             <button type="submit" className="sx-submit btn-primary" disabled={busy}>
               {busy ? '正在保存…' : '保存更改'}
             </button>

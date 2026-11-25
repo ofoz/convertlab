@@ -2262,6 +2262,43 @@ fieldset[disabled] .cx-options-caption {
 .sx-labeled-field input {
   width: 100%;
 }
+.sx-password-control {
+  position: relative;
+  display: block;
+}
+.sx-password-control .form-field {
+  padding-right: 3.25rem;
+}
+.sx-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.7rem;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+.sx-password-toggle:hover,
+.sx-password-toggle:focus-visible {
+  background: var(--surface-raised);
+  color: var(--primary);
+}
+.sx-password-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
 .sx-submit {
   width: 100%;
   margin-top: 0.3rem;
